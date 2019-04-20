@@ -13,6 +13,7 @@ const envmod = require('gulp-env-modify');
 const favicon = require ('gulp-real-favicon');
 const filenames = require("gulp-filenames");
 const image = require('gulp-image');
+const minimist = require('minimist');
 const rename = require('gulp-rename');
 const sass = require('gulp-sass');
 const uglify = require('gulp-uglify');
@@ -289,6 +290,29 @@ const clean = gulp.series(
 
 
 /**
+ * @Command: gulp template --name filename
+ *
+ * Test
+ */
+const template = (done) => {
+    var options = minimist(process.argv.slice(3));
+    let template_name = options.name + '.html';
+    if (!fs.existsSync('./' + dev_folder + '/' + template_name)) {
+        gulp.src('./templates/index.html')
+            .pipe(rename(template_name))
+            .pipe(gulp.dest('./' + dev_folder));
+        console.log(template_name + ' created');
+    } else
+    {
+        console.error('file already exists');
+    }
+    done();
+};
+
+
+
+
+/**
  * @Command: gulp css
  *
  * Compile scss files, combine and minimise all css files, save to distribution folder
@@ -329,3 +353,4 @@ exports.images = minify_images;
 exports.html = copy_html;
 exports.zip = zip_assets;
 exports.clean = clean;
+exports.template = template;
