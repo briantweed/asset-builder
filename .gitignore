@@ -1,2 +1,12 @@
-/node_modules
+*
+!*/
 .idea
+/node_modules
+!.env
+!.gitignore
+!gulpfile.json
+!faviconData.json
+!package.json
+!package-lock.json
+!README.md
+!templates/*
