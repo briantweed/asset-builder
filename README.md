@@ -64,14 +64,14 @@ This will generate you folder structure. You can now add the necessary files to 
 ## Gulp Commands
 
 The main gulp commands are:
-`gulp` - compile css, js and html files
-`gulp build` - will run all available processes (css, js, html, favicon, image compression)
-`gulp help` - will list all available commands
-`gulp setup` - create folder structure based on `.env` settings
-`gulp css` - compile sass, combine and minify css files, save to distribution folder
-`gulp js` - combine and minify css files, save to distribution folder
-`gulp html` - copy html from development to distribution
-`gulp favicon` - generate favicon files
-`gulp images` - compress all images and save to distribution folder
-`gulp zip` - zip distribution folder
-`gulp clean` - delete all compiled files
+- `gulp` - compile css, js and html files
+- `gulp build` - will run all available processes (css, js, html, favicon, image compression)
+- `gulp help` - will list all available commands
+- `gulp setup` - create folder structure based on `.env` settings
+- `gulp css` - compile sass, combine and minify css files, save to distribution folder
+- `gulp js` - combine and minify css files, save to distribution folder
+- `gulp html` - copy html from development to distribution
+- `gulp favicon` - generate favicon files
+- `gulp images` - compress all images and save to distribution folder
+- `gulp zip` - zip distribution folder
+- `gulp clean` - delete all compiled files
