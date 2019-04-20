@@ -2,7 +2,7 @@
 
 - Compile scss files
 - Combine and minimise all css files
-- Combine and minimise all js files (@TODO)
+- Combine and minimise all js files
 - Generate favicon images
 - Compress all images
 - Create zip file of distribution folder
@@ -75,3 +75,12 @@ The main gulp commands are:
 - `gulp images` - compress all images and save to distribution folder
 - `gulp zip` - zip distribution folder
 - `gulp clean` - delete all compiled files
+
+
+### favicon-data.json
+
+This file is written to by the gulp response. It's included in the repo but the changes do not need to be tracked. If they are being tracked run
+
+``` 
+git update-index --assume-unchanged favicon-data.json
+```

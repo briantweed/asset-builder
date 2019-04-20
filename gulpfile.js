@@ -103,12 +103,6 @@ const minify_css = () => {
 
 
 
-const delete_compiled_sass = () => {
-    return del('./' + dev_css_folder + '/*compiled.css');
-};
-
-
-
 const minify_js = () => {
     return gulp.src('./' + dev_js_folder + '/*.js')
         .pipe(concat(env.JS_FILE_NAME + '.js'))
@@ -210,7 +204,6 @@ const generate_favicon = (done) => {
 };
 
 
-
 const zip_assets = () => {
     return gulp.src(dist_folder + '/*')
         .pipe(zip(zip_file_name + '.zip'))
@@ -218,13 +211,20 @@ const zip_assets = () => {
 };
 
 
-const clean = () => {
-    return del([
-        dist_folder + '/*',
-        zip_file_name + '.zip'
-    ]);
+
+const delete_compiled_sass = () => {
+    return del('./' + dev_css_folder + '/*compiled.css');
 };
 
+
+const delete_zip_file = () => {
+    return del(zip_file_name + '.zip');
+};
+
+
+const delete_distribution_folders = () => {
+    return del(dist_folder + '/*');
+};
 
 
 const copy_html = () => {
@@ -232,21 +232,35 @@ const copy_html = () => {
         .pipe(gulp.dest('./' + dist_folder));
 };
 
+const clean = gulp.series(
+    gulp.parallel(
+        delete_compiled_sass,
+        delete_zip_file,
+        delete_distribution_folders
+    ),
+    setup
+);
 
-
-
-const compile_css = gulp.series(compile_sass, minify_css, delete_compiled_sass);
+const compile_css = gulp.series(
+    compile_sass,
+    minify_css,
+    delete_compiled_sass
+);
 
 const build = gulp.series(
     clean,
-    gulp.parallel(compile_css, minify_js, copy_html, generate_favicon, minify_images)
+    gulp.parallel(
+        compile_css,
+        minify_js,
+        copy_html,
+        generate_favicon,
+        minify_images
+    )
 );
 
 const css_and_js = gulp.series(
-    clean,
     gulp.parallel(compile_css, minify_js)
 );
-
 
 
 exports.help = help;
