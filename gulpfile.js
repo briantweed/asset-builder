@@ -53,7 +53,7 @@ const setup = (done) => {
         }
     });
 
-    del('.git');
+    // del('.git');
 
     done();
 };
@@ -114,66 +114,72 @@ const minify_images = () => {
 
 
 const generate_favicon = (done) => {
-    favicon.generateFavicon({
-        masterPicture: './' + env.DEVELOPMENT_FOLDER_NAME + '/' + env.DEVELOPMENT_FAVICON_FOLDER_NAME + '/' + env.FAVICON_IMAGE_NAME,
-        dest: './' + env.DISTRIBUTION_FOLDER_NAME,
-        iconsPath: '/',
-        design: {
-            ios: {
-                pictureAspect: 'noChange',
-                assets: {
-                    ios6AndPriorIcons: false,
-                    ios7AndLaterIcons: false,
-                    precomposedIcons: false,
-                    declareOnlyDefaultIcon: true
+    let master_favicon = env.DEVELOPMENT_FOLDER_NAME + '/' + env.DEVELOPMENT_FAVICON_FOLDER_NAME + '/' + env.FAVICON_IMAGE_NAME;
+    if (fs.existsSync('./' + master_favicon)) {
+        favicon.generateFavicon({
+            masterPicture: './' + master_favicon,
+            dest: './' + env.DISTRIBUTION_FOLDER_NAME,
+            iconsPath: '/',
+            design: {
+                ios: {
+                    pictureAspect: 'noChange',
+                    assets: {
+                        ios6AndPriorIcons: false,
+                        ios7AndLaterIcons: false,
+                        precomposedIcons: false,
+                        declareOnlyDefaultIcon: true
+                    },
+                    appName: env.PROJECT_TITLE
                 },
-                appName: env.PROJECT_TITLE
-            },
-            desktopBrowser: {},
-            windows: {
-                pictureAspect: 'noChange',
-                backgroundColor: env.FAVICON_TILE_COLOR,
-                onConflict: 'override',
-                assets: {
-                    windows80Ie10Tile: false,
-                    windows10Ie11EdgeTiles: {
-                        small: false,
-                        medium: true,
-                        big: false,
-                        rectangle: false
+                desktopBrowser: {},
+                windows: {
+                    pictureAspect: 'noChange',
+                    backgroundColor: env.FAVICON_TILE_COLOR,
+                    onConflict: 'override',
+                    assets: {
+                        windows80Ie10Tile: false,
+                        windows10Ie11EdgeTiles: {
+                            small: false,
+                            medium: true,
+                            big: false,
+                            rectangle: false
+                        }
+                    },
+                    appName: env.PROJECT_TITLE
+                },
+                androidChrome: {
+                    pictureAspect: 'noChange',
+                    themeColor: env.FAVICON_THEME_COLOR,
+                    manifest: {
+                        name: env.PROJECT_TITLE,
+                        display: 'standalone',
+                        orientation: 'notSet',
+                        onConflict: 'override',
+                        declared: true
+                    },
+                    assets: {
+                        legacyIcon: false,
+                        lowResolutionIcons: false
                     }
                 },
-                appName: env.PROJECT_TITLE
-            },
-            androidChrome: {
-                pictureAspect: 'noChange',
-                themeColor: env.FAVICON_THEME_COLOR,
-                manifest: {
-                    name: env.PROJECT_TITLE,
-                    display: 'standalone',
-                    orientation: 'notSet',
-                    onConflict: 'override',
-                    declared: true
-                },
-                assets: {
-                    legacyIcon: false,
-                    lowResolutionIcons: false
+                safariPinnedTab: {
+                    pictureAspect: 'blackAndWhite',
+                    threshold: 53.28125,
+                    themeColor: env.FAVICON_TILE_COLOR
                 }
             },
-            safariPinnedTab: {
-                pictureAspect: 'blackAndWhite',
-                threshold: 53.28125,
-                themeColor: env.FAVICON_TILE_COLOR
-            }
-        },
-        settings: {
-            scalingAlgorithm: 'Mitchell',
-            errorOnImageTooSmall: false
-        },
-        markupFile: 'faviconData.json'
-    }, function() {
+            settings: {
+                scalingAlgorithm: 'Mitchell',
+                errorOnImageTooSmall: false
+            },
+            markupFile: 'faviconData.json'
+        }, function() {
+            done();
+        });
+    } else {
+        console.log('Favicon not generated, ' + master_favicon + ' not found');
         done();
-    });
+    }
 };
 
 
