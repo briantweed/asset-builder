@@ -71,6 +71,7 @@ The main gulp commands are:
 - `gulp css` - compile sass, combine and minify css files, save to distribution folder
 - `gulp js` - combine and minify css files, save to distribution folder
 - `gulp html` - copy html from development to distribution
+- `gulp template --name FILENAME` - create a new html file
 - `gulp favicon` - generate favicon files
 - `gulp images` - compress all images and save to distribution folder
 - `gulp zip` - zip distribution folder

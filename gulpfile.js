@@ -295,18 +295,22 @@ const clean = gulp.series(
  * Test
  */
 const template = (done) => {
-    var options = minimist(process.argv.slice(3));
-    let template_name = options.name + '.html';
-    if (!fs.existsSync('./' + dev_folder + '/' + template_name)) {
-        gulp.src('./templates/index.html')
-            .pipe(rename(template_name))
-            .pipe(gulp.dest('./' + dev_folder));
-        console.log(template_name + ' created');
-    } else
-    {
-        console.error('file already exists');
+    let msg;
+    let options = minimist(process.argv.slice(3));
+    if (options.name !== undefined) {
+        let template_name = options.name + '.html';
+        if (!fs.existsSync('./' + dev_folder + '/' + template_name)) {
+            gulp.src('./templates/index.html')
+                .pipe(rename(template_name))
+                .pipe(gulp.dest('./' + dev_folder));
+                msg = template_name + ' created';
+        } else {
+           msg = 'file already exists';
+        }
+    } else {
+        msg = 'need filename';
     }
-    done();
+    done(console.log(msg));
 };
 
 
