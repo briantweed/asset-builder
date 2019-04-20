@@ -5,6 +5,7 @@
 - Combine and minimise all js files (@TODO)
 - Generate favicon images
 - Compress all images
+- Create zip file of distribution folder
 
 
 ## Setup
@@ -13,10 +14,11 @@ This asset builder uses Gulp 4.0. Make sure you have the necessary versions of N
 
 Run `npm install`
 
-In the `.env` file, set you project variables. Below are the default settings.
+In the `.env` file, set you project variables. Below are the default settings:
 
 ```
 # Project
+#
 PROJECT_TITLE = Asset Builder
 ZIP_FILE_NAME = assets
 
@@ -29,10 +31,10 @@ CSS_FILE_NAME_SUFFIX = min
 
 JS_FILE_NAME = app
 JS_FILE_NAME_SUFFIX = min
-```
 
-The other `.env` variables are the names of the development and distribution folders and sub-folders:
-```
+
+# Development Folder Structure
+#
 DEVELOPMENT_FOLDER_NAME = development
 DEVELOPMENT_CSS_FOLDER_NAME = css
 DEVELOPMENT_FAVICON_FOLDER_NAME = favicon
@@ -41,6 +43,9 @@ DEVELOPMENT_IMAGES_FOLDER_NAME = img
 DEVELOPMENT_JS_FOLDER_NAME = js
 DEVELOPMENT_SASS_FOLDER_NAME = sass
 
+
+# Distribution FOlder Structure
+#
 DISTRIBUTION_FOLDER_NAME = public
 DISTRIBUTION_CSS_FOLDER_NAME = css
 DISTRIBUTION_FONTS_FOLDER_NAME = fonts
