@@ -2,17 +2,36 @@
 
 const fs = require('fs');
 const gulp = require('gulp');
-const envmod = require('gulp-env-modify');
 const cleanCSS = require('gulp-clean-css');
 const concat = require('gulp-concat');
 const del = require('del');
+const envmod = require('gulp-env-modify');
+const env = envmod.getData();
 const favicon = require ('gulp-real-favicon');
 const filenames = require("gulp-filenames");
 const image = require('gulp-image');
 const rename = require('gulp-rename');
 const sass = require('gulp-sass');
+const uglify = require('gulp-uglify');
 const zip = require('gulp-zip');
-const env = envmod.getData();
+
+
+const dev_folder = env.DEVELOPMENT_FOLDER_NAME;
+const dev_css_folder = dev_folder + '/' + env.DEVELOPMENT_CSS_FOLDER_NAME;
+const dev_favicon_folder = dev_folder + '/' + env.DEVELOPMENT_FAVICON_FOLDER_NAME;
+const dev_fonts_folder = dev_folder + '/' + env.DEVELOPMENT_FONTS_FOLDER_NAME;
+const dev_images_folder = dev_folder + '/' + env.DEVELOPMENT_IMAGES_FOLDER_NAME;
+const dev_js_folder = dev_folder + '/' + env.DEVELOPMENT_JS_FOLDER_NAME;
+const dev_sass_folder = dev_folder + '/' + env.DEVELOPMENT_SASS_FOLDER_NAME;
+
+const dist_folder = env.DISTRIBUTION_FOLDER_NAME;
+const dist_css_folder = dist_folder + '/' + env.DISTRIBUTION_CSS_FOLDER_NAME;
+const dist_fonts_folder = dist_folder + '/' + env.DISTRIBUTION_FONTS_FOLDER_NAME;
+const dist_images_folder = dist_folder + '/' + env.DISTRIBUTION_IMAGES_FOLDER_NAME;
+const dist_js_folder = dist_folder + '/' + env.DISTRIBUTION_JS_FOLDER_NAME;
+
+const favicon_name = env.FAVICON_IMAGE_NAME;
+const zip_file_name = env.ZIP_FILE_NAME;
 
 
 const help = (done) => {
@@ -21,10 +40,10 @@ const help = (done) => {
     console.log("  build      -  run all processes");
     console.log("  css        -  compile sass files, combine and minify all css files");
     console.log("  js         -  combine and minify all js files");
-    console.log("  html       -  copy html files from " + env.DEVELOPMENT_FOLDER_NAME + " folder to " + env.DISTRIBUTION_FOLDER_NAME + " folder");
-    console.log("  favicon    -  create favicons from " + env.DEVELOPMENT_FOLDER_NAME + "/" + env.DEVELOPMENT_FAVICON_FOLDER_NAME + "/"+ env.FAVICON_IMAGE_NAME +" image");
-    console.log("  images     -  compress all images in " + env.DEVELOPMENT_FOLDER_NAME + "/" + env.DEVELOPMENT_IMAGES_FOLDER_NAME + " and save to " + env.DISTRIBUTION_FOLDER_NAME + "/" + env.DISTRIBUTION_IMAGES_FOLDER_NAME );
-    console.log("  zip        -  create zip file of the "  + env.DISTRIBUTION_FOLDER_NAME + " folder called "  + env.ZIP_FILE_NAME + ".zip");
+    console.log("  html       -  copy html files from " + dev_folder + " to " + dist_folder + " folder");
+    console.log("  favicon    -  create favicons from " + dev_favicon_folder + "/" + favicon_name);
+    console.log("  images     -  compress all images in " + dev_images_folder + " and save to " + dist_images_folder );
+    console.log("  zip        -  create zip file from the "  + dist_folder + " folder called "  + zip_file_name + ".zip");
     console.log("  clean      -  delete all compiled files\n\n");
     done();
 };
@@ -32,19 +51,19 @@ const help = (done) => {
 
 const setup = (done) => {
     const folders = [
-        env.DEVELOPMENT_FOLDER_NAME,
-        env.DEVELOPMENT_FOLDER_NAME + '/' + env.DEVELOPMENT_CSS_FOLDER_NAME,
-        env.DEVELOPMENT_FOLDER_NAME + '/' + env.DEVELOPMENT_FAVICON_FOLDER_NAME,
-        env.DEVELOPMENT_FOLDER_NAME + '/' + env.DEVELOPMENT_FONTS_FOLDER_NAME,
-        env.DEVELOPMENT_FOLDER_NAME + '/' + env.DEVELOPMENT_IMAGES_FOLDER_NAME,
-        env.DEVELOPMENT_FOLDER_NAME + '/' + env.DEVELOPMENT_JS_FOLDER_NAME,
-        env.DEVELOPMENT_FOLDER_NAME + '/' + env.DEVELOPMENT_SASS_FOLDER_NAME,
+        dev_folder,
+        dev_css_folder,
+        dev_favicon_folder,
+        dev_fonts_folder,
+        dev_images_folder,
+        dev_js_folder,
+        dev_sass_folder,
 
-        env.DISTRIBUTION_FOLDER_NAME,
-        env.DISTRIBUTION_FOLDER_NAME + '/' + env.DISTRIBUTION_CSS_FOLDER_NAME,
-        env.DISTRIBUTION_FOLDER_NAME + '/' + env.DISTRIBUTION_FONTS_FOLDER_NAME,
-        env.DISTRIBUTION_FOLDER_NAME + '/' + env.DISTRIBUTION_IMAGES_FOLDER_NAME,
-        env.DISTRIBUTION_FOLDER_NAME + '/' + env.DISTRIBUTION_JS_FOLDER_NAME,
+        dist_folder,
+        dist_css_folder,
+        dist_fonts_folder,
+        dist_images_folder,
+        dist_js_folder
     ];
 
     folders.forEach(dir => {
@@ -61,42 +80,50 @@ const setup = (done) => {
 
 
 const compile_sass = () => {
-    return gulp.src('./' + env.DEVELOPMENT_FOLDER_NAME + '/' + env.DEVELOPMENT_SASS_FOLDER_NAME + '/**/*.scss')
+    return gulp.src('./' + dev_sass_folder + '/**/*.scss')
         .pipe(sass().on('error', sass.logError))
         .pipe(rename({
-            suffix: '.' + env.DEVELOPMENT_COMPILED_SASS_FILE_NAME_SUFFIX
+            suffix: '.compiled'
         }))
-        .pipe(gulp.dest('./' + env.DEVELOPMENT_FOLDER_NAME + '/'  + env.DEVELOPMENT_CSS_FOLDER_NAME));
+        .pipe(gulp.dest('./' + dev_css_folder));
 };
 
 
 
 const minify_css = () => {
-    return gulp.src('./' + env.DEVELOPMENT_FOLDER_NAME + '/' + env.DEVELOPMENT_CSS_FOLDER_NAME + '/*.css')
+    return gulp.src('./' + dev_css_folder + '/*.css')
         .pipe(concat(env.CSS_FILE_NAME + '.css'))
-        .pipe(gulp.dest('./' + env.DISTRIBUTION_FOLDER_NAME + '/css'))
+        .pipe(gulp.dest('./' + dist_css_folder))
         .pipe(cleanCSS({compatibility: 'ie8'}))
         .pipe(rename({
-            prefix: '',
             suffix: '.' + env.CSS_FILE_NAME_SUFFIX
         }))
-        .pipe(gulp.dest('./' + env.DISTRIBUTION_FOLDER_NAME + '/css'));
+        .pipe(gulp.dest('./' + dist_css_folder));
 };
 
 
-const compile_js = () => function() {
-    return gulp.src('./' + env.DEVELOPMENT_FOLDER_NAME + '/js/*.js')
-        .pipe(concat('pre-production.js'))
-        .pipe(gulp.dest('./' + env.DEVELOPMENT_FOLDER_NAME + '/js'))
+
+const delete_compiled_sass = () => {
+    return del('./' + dev_css_folder + '/*compiled.css');
+};
+
+
+
+const minify_js = () => {
+    return gulp.src('./' + dev_js_folder + '/*.js')
+        .pipe(concat(env.JS_FILE_NAME + '.js'))
+        .pipe(gulp.dest('./' + dist_js_folder))
         .pipe(uglify())
-        .pipe(rename("production.min.js"))
-        .pipe(gulp.dest('./' + env.DISTRIBUTION_FOLDER_NAME + '/js'));
+        .pipe(rename({
+            suffix: '.' + env.JS_FILE_NAME_SUFFIX
+        }))
+        .pipe(gulp.dest('./' + dist_js_folder));
 };
 
 
 
 const minify_images = () => {
-    return gulp.src('./' + env.DEVELOPMENT_FOLDER_NAME + '/' + env.DEVELOPMENT_IMAGES_FOLDER_NAME + '/*')
+    return gulp.src('./' + dev_images_folder + '/*')
         .pipe(image({
             pngquant: true,
             optipng: false,
@@ -108,17 +135,17 @@ const minify_images = () => {
             svgo: true,
             concurrent: 10
         }))
-        .pipe(gulp.dest('./' + env.DISTRIBUTION_FOLDER_NAME + '/' + env.DISTRIBUTION_IMAGES_FOLDER_NAME));
+        .pipe(gulp.dest('./' + dist_images_folder));
 };
 
 
 
 const generate_favicon = (done) => {
-    let master_favicon = env.DEVELOPMENT_FOLDER_NAME + '/' + env.DEVELOPMENT_FAVICON_FOLDER_NAME + '/' + env.FAVICON_IMAGE_NAME;
+    let master_favicon = dev_favicon_folder + '/' + favicon_name;
     if (fs.existsSync('./' + master_favicon)) {
         favicon.generateFavicon({
             masterPicture: './' + master_favicon,
-            dest: './' + env.DISTRIBUTION_FOLDER_NAME,
+            dest: './' + dist_folder,
             iconsPath: '/',
             design: {
                 ios: {
@@ -172,7 +199,7 @@ const generate_favicon = (done) => {
                 scalingAlgorithm: 'Mitchell',
                 errorOnImageTooSmall: false
             },
-            markupFile: 'faviconData.json'
+            markupFile: 'favicon-data.json'
         }, function() {
             done();
         });
@@ -185,40 +212,39 @@ const generate_favicon = (done) => {
 
 
 const zip_assets = () => {
-    return gulp.src(env.DISTRIBUTION_FOLDER_NAME + '/*')
-        .pipe(zip(env.ZIP_FILE_NAME + '.zip'))
+    return gulp.src(dist_folder + '/*')
+        .pipe(zip(zip_file_name + '.zip'))
         .pipe(gulp.dest('./'));
 };
 
 
 const clean = () => {
     return del([
-        env.DEVELOPMENT_FOLDER_NAME + '/' + env.DEVELOPMENT_CSS_FOLDER_NAME + '/*' + env.DEVELOPMENT_COMPILED_SASS_FILE_NAME_SUFFIX + '.css',
-        env.DISTRIBUTION_FOLDER_NAME + '/*',
-        env.ZIP_FILE_NAME + '.zip'
+        dist_folder + '/*',
+        zip_file_name + '.zip'
     ]);
 };
 
 
 
 const copy_html = () => {
-    return gulp.src('./' + env.DEVELOPMENT_FOLDER_NAME + '/*.html')
-        .pipe(gulp.dest('./' + env.DISTRIBUTION_FOLDER_NAME));
+    return gulp.src('./' + dev_folder + '/*.html')
+        .pipe(gulp.dest('./' + dist_folder));
 };
 
 
 
 
-const compile_css = gulp.series(compile_sass, minify_css);
+const compile_css = gulp.series(compile_sass, minify_css, delete_compiled_sass);
 
 const build = gulp.series(
     clean,
-    gulp.parallel(compile_css, copy_html, generate_favicon, minify_images)
+    gulp.parallel(compile_css, minify_js, copy_html, generate_favicon, minify_images)
 );
 
 const css_and_js = gulp.series(
     clean,
-    gulp.parallel(compile_css, compile_js)
+    gulp.parallel(compile_css, minify_js)
 );
 
 
@@ -233,7 +259,7 @@ exports.build = build;
 
 exports.css = compile_css;
 
-exports.js = compile_js;
+exports.js = minify_js;
 
 exports.favicon = generate_favicon;
 
