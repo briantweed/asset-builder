@@ -50,7 +50,9 @@ let folders = [
     dist_folder, dist_css_folder, dist_fonts_folder, dist_images_folder, dist_js_folder
 ];
 
+let project_author = env.PROJECT_AUTHOR;
 let project_title = env.PROJECT_TITLE;
+let template_name = env.HTML_TEMPLATE_FILE_NAME;
 
 let favicon_name = env.FAVICON_IMAGE_NAME;
 let favicon_tile_color = env.FAVICON_TILE_COLOR;
@@ -310,14 +312,16 @@ const clean = gulp.series(
 /**
  * @Command: gulp template --name filename
  *
+ * @TODO - apply replace when template copied to distribution folder
  * Create an html file
  */
 const template = () => {
     let options = minimist(process.argv.slice(3));
     if (options.name !== undefined && options.name !== true) {
-        let template_name = options.name + '.html';
-        if (!fs.existsSync('./' + dev_folder + '/' + template_name)) {
-            return gulp.src('./templates/template.html')
+        let page_name = options.name + '.html';
+        if (!fs.existsSync('./' + dev_folder + '/' + page_name)) {
+            return gulp.src('./templates/' + template_name + '.html')
+                .pipe(replace('{{ page_name }}', capitalize(options.name)))
                 .pipe(replace('{{ project_title }}', project_title))
                 .pipe(replace('{{ theme_color }}', favicon_theme_color))
                 .pipe(replace('{{ tile_color }}', favicon_tile_color))
@@ -325,16 +329,25 @@ const template = () => {
                 .pipe(replace('{{ css_file_suffix }}', css_file_suffix))
                 .pipe(replace('{{ js_file_name }}', js_file_name))
                 .pipe(replace('{{ js_file_suffix }}', js_file_suffix))
-                .pipe(rename(template_name))
+                .pipe(rename(page_name))
                 .pipe(gulp.dest('./' + dev_folder))
-                .pipe(notify({ message: template_name + ' created', onLast: true }))
+                .pipe(notify({ message: page_name + ' created', onLast: true }))
         } else {
-            return gulp.src('/').pipe(notify({ message: 'Error: ' + template_name + ' already exists', emitError: true }));
+            return gulp.src('/').pipe(notify({ message: 'Error: ' + page_name + ' already exists', emitError: true }));
         }
     } else {
         return gulp.src('/').pipe(notify({ message: 'Error: filename required', emitError: true }));
     }
 };
+
+
+/**
+ * Delete any existing templates from the distribution folder
+ */
+const delete_copied_html = () => {
+    return del(['./' + dist_folder + '/*.html', '!./' + dist_folder + '/index.html']);
+};
+
 
 
 /**
@@ -365,18 +378,13 @@ const create_html_link_page = (done) => {
     let names = require('./src/names.json');
     let string = "<ul>\n";
     for (let i = 0; i < links.length; i++) {
-        string += "\t\t\t\t\t<li><a href='" + links[i] + "'>" + names[i] + "</a></li>\n";
+        string += "\t\t\t\t\t\t<li><a href='" + links[i] + "'>" + capitalize(names[i]) + "</a></li>\n";
     }
-    string += "\t\t\t\t</ul>";
+    string += "\t\t\t\t\t</ul>";
     gulp.src('./templates/index.html')
         .pipe(replace('{{ links }}', string))
         .pipe(replace('{{ project_title }}', project_title))
-        .pipe(replace('{{ theme_color }}', favicon_theme_color))
-        .pipe(replace('{{ tile_color }}', favicon_tile_color))
-        .pipe(replace('{{ css_file_name }}', css_file_name))
-        .pipe(replace('{{ css_file_suffix }}', css_file_suffix))
-        .pipe(replace('{{ js_file_name }}', js_file_name))
-        .pipe(replace('{{ js_file_suffix }}', js_file_suffix))
+        .pipe(replace('{{ project_author }}', project_author))
         .pipe(gulp.dest(dist_folder));
     done();
 };
@@ -404,7 +412,7 @@ const delete_html_names = () => {
  * Copy html files from development to distribution
  * Create landing page with links to template files
  */
-const html = gulp.series( gulp.parallel(get_html_links ,get_html_names), gulp.parallel(create_html_link_page, copy_html), delete_html_names);
+const compile_html = gulp.series( delete_copied_html, gulp.parallel(get_html_links ,get_html_names), gulp.parallel(create_html_link_page, copy_html), delete_html_names);
 
 
 /**
@@ -413,7 +421,7 @@ const html = gulp.series( gulp.parallel(get_html_links ,get_html_names), gulp.pa
  * Compile all assets
  */
 const build = gulp.series(clean,
-    gulp.parallel(compile_css, minify_js, html, generate_favicon, minify_images)
+    gulp.parallel(compile_css, minify_js, compile_html, generate_favicon, minify_images)
 );
 
 
@@ -445,8 +453,28 @@ exports.css = compile_css;
 exports.js = minify_js;
 exports.favicon = generate_favicon;
 exports.images = minify_images;
-exports.html = html;
+exports.html = compile_html;
 exports.zip = zip_assets;
 exports.clean = clean;
 exports.test = test;
 exports.template = template;
+
+
+
+
+
+/**
+ * -- Helper Function --
+ */
+
+
+/**
+ * Capitalize the first letter of a word
+ *
+ * @param string
+ * @returns {string}
+ */
+const capitalize = (string) => {
+    if (typeof string !== 'string') return '';
+    return string.charAt(0).toUpperCase() + string.slice(1)
+}

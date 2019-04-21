@@ -17,14 +17,16 @@ Run `npm install`
 In the `.env` file, set you project variables. Below are the default settings:
 
 ```
-# Project
-#
-PROJECT_TITLE = Asset Builder
-ZIP_FILE_NAME = assets
 
-FAVICON_IMAGE_NAME = favicon.png
-FAVICON_TILE_COLOR = #ffffff
-FAVICON_THEME_COLOR = #ffffff
+# Project
+PROJECT_AUTHOR = Your Name
+
+PROJECT_TITLE = Asset Builder
+ZIP_FILE_NAME = assets_builder
+
+FAVICON_IMAGE_NAME = favicon.jpg
+FAVICON_TILE_COLOR = #123456
+FAVICON_THEME_COLOR = #987654
 
 CSS_FILE_NAME = app
 CSS_FILE_NAME_SUFFIX = min
@@ -32,10 +34,19 @@ CSS_FILE_NAME_SUFFIX = min
 JS_FILE_NAME = app
 JS_FILE_NAME_SUFFIX = min
 
+EXPORT_FOLDER_NAME = exports
 
-# Development Folder Structure
+# Development Folder Structure:
 #
-DEVELOPMENT_FOLDER_NAME = development
+# |-- development
+#   |-- css
+#   |-- favicon
+#   |-- fonts
+#   |-- img
+#   |-- js
+#   |-- sass
+
+DEVELOPMENT_FOLDER_NAME = resources
 DEVELOPMENT_CSS_FOLDER_NAME = css
 DEVELOPMENT_FAVICON_FOLDER_NAME = favicon
 DEVELOPMENT_FONTS_FOLDER_NAME = fonts
@@ -44,8 +55,14 @@ DEVELOPMENT_JS_FOLDER_NAME = js
 DEVELOPMENT_SASS_FOLDER_NAME = sass
 
 
-# Distribution FOlder Structure
+# Distribution Folder Structure:
 #
+# |-- public
+#   |-- css
+#   |-- fonts
+#   |-- img
+#   |-- js
+
 DISTRIBUTION_FOLDER_NAME = public
 DISTRIBUTION_CSS_FOLDER_NAME = css
 DISTRIBUTION_FONTS_FOLDER_NAME = fonts
@@ -74,14 +91,6 @@ The main gulp commands are:
 - `gulp template --name FILENAME` - create a new html file
 - `gulp favicon` - generate favicon files
 - `gulp images` - compress all images and save to distribution folder
-- `gulp zip` - zip distribution folder
+- `gulp zip` - zip distribution folder and save to export folder
 - `gulp clean` - delete all compiled files
 
-
-### favicon-data.json
-
-This file is written to by the gulp response. It's included in the repo but the changes do not need to be tracked. If they are being tracked run
-
-``` 
-git update-index --assume-unchanged favicon-data.json
-```
