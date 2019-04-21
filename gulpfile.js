@@ -11,10 +11,12 @@ const concat = require('gulp-concat');
 const del = require('del');
 const envmod = require('gulp-env-modify');
 const favicon = require ('gulp-real-favicon');
-const filenames = require("gulp-filenames");
+const filelist = require("gulp-filelist");
 const image = require('gulp-image');
 const minimist = require('minimist');
+const notify =  require('gulp-notify');
 const rename = require('gulp-rename');
+const replace = require('gulp-replace');
 const sass = require('gulp-sass');
 const uglify = require('gulp-uglify');
 const zip = require('gulp-zip');
@@ -245,16 +247,6 @@ const zip_assets = () => {
 
 
 /**
- * @Command: gulp html
- *
- * Copy html files from development to distribution
- */
-const copy_html = () => {
-    return gulp.src('./' + dev_folder + '/*.html').pipe(gulp.dest('./' + dist_folder));
-};
-
-
-/**
  * Delete compiled sass files
  */
 const delete_compiled_sass = () => {
@@ -292,28 +284,93 @@ const clean = gulp.series(
 /**
  * @Command: gulp template --name filename
  *
- * Test
+ * Create an html file
  */
-const template = (done) => {
+const template = () => {
     let msg;
     let options = minimist(process.argv.slice(3));
-    if (options.name !== undefined) {
+    if (options.name !== undefined && options.name !== true) {
         let template_name = options.name + '.html';
         if (!fs.existsSync('./' + dev_folder + '/' + template_name)) {
-            gulp.src('./templates/index.html')
+            return gulp.src('./templates/index.html')
+                .pipe(replace('{{ links }}', ''))
+                .pipe(replace('{{ project_title }}', project_title))
+                .pipe(replace('{{ theme_color }}', favicon_theme_color))
+                .pipe(replace('{{ tile_color }}', favicon_tile_color))
+                .pipe(replace('{{ css_file_name }}', css_file_name))
+                .pipe(replace('{{ css_file_suffix }}', css_file_suffix))
                 .pipe(rename(template_name))
-                .pipe(gulp.dest('./' + dev_folder));
-                msg = template_name + ' created';
+                .pipe(gulp.dest('./' + dev_folder))
+                .pipe(notify({ message: template_name + ' created', onLast: true }))
         } else {
-           msg = 'file already exists';
+            return gulp.src('/').pipe(notify({ message: 'Error: ' + template_name + ' already exists', emitError: true }));
         }
     } else {
-        msg = 'need filename';
+        return gulp.src('/').pipe(notify({ message: 'Error: filename required', emitError: true }));
     }
-    done(console.log(msg));
 };
 
 
+/**
+ * Create files containing list of template names
+ */
+const get_html_names = (done) => {
+    gulp.src('./' + dev_folder + '/*.html')
+        .pipe(filelist('links.json', { flatten: true}))
+        .pipe(gulp.dest('./'));
+    gulp.src('./' + dev_folder + '/*.html')
+        .pipe(filelist('names.json', { flatten: true, removeExtensions: true }))
+        .pipe(gulp.dest('./'));
+    done();
+};
+
+
+/**
+ * Create landing page with links to template files
+ */
+const create_html_link_page = (done) => {
+    let links = require('./links.json');
+    let names = require('./names.json');
+    let string = '<ul>';
+    for (let i = 0; i < links.length; i++) {
+       string += "<li><a href='" + links[i] + "'>" + names[i] + "</a></li>";
+    }
+    string += '</ul>';
+    gulp.src('./templates/index.html')
+        .pipe(replace('{{ links }}', string))
+        .pipe(replace('{{ project_title }}', project_title))
+        .pipe(replace('{{ theme_color }}', favicon_theme_color))
+        .pipe(replace('{{ tile_color }}', favicon_tile_color))
+        .pipe(replace('{{ css_file_name }}', css_file_name))
+        .pipe(replace('{{ css_file_suffix }}', css_file_suffix))
+        .pipe(gulp.dest(dist_folder));
+    done();
+};
+
+
+/**
+ * Delete files containing list of template names
+ */
+const delete_html_names = () => {
+    return del(['./links.json', './names.json']);
+};
+
+
+/**
+ * Copy html files from development to distribution
+ */
+const copy_html = () => {
+    return gulp.src('./' + dev_folder + '/*.html').pipe(gulp.dest('./' + dist_folder));
+};
+
+
+/**
+ * @Command: gulp html
+ *
+ * Copy html files from development to distribution
+ * Create landing page with links to template files
+ */
+const html = gulp.series(get_html_names, create_html_link_page, copy_html, delete_html_names);
 
 
 /**
@@ -344,6 +401,14 @@ const css_and_js = gulp.parallel(compile_css, minify_js);
 
 
 /**
+ * @Command: gulp test
+ */
+const test = () => {
+    return gulp.src('./').pipe(notify({ message: "Gulp is working", onLast: true }));
+};
+
+
+/**
  * -- Available user commands --
  */
 exports.help = help;
@@ -354,7 +419,8 @@ exports.css = compile_css;
 exports.js = minify_js;
 exports.favicon = generate_favicon;
 exports.images = minify_images;
-exports.html = copy_html;
+exports.html = html;
 exports.zip = zip_assets;
 exports.clean = clean;
+exports.test = test;
 exports.template = template;
