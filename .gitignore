@@ -9,3 +9,5 @@
 !package-lock.json
 !README.md
 !templates/*
+!src/*
+src/*.json

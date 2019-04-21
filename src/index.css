@@ -1,0 +1,22 @@
+section#links ul {
+    list-style-type: none;
+}
+
+section#links ul > li > a {
+    display: block;
+    border: 2px solid #999;
+    margin: 1rem 0;
+    padding: 0.5rem 2rem;
+    text-align: center;
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #666;
+    transition: all 0.25s;
+}
+
+section#links ul > li > a:hover, section#links ul > li > a:focus {
+    text-decoration: none;
+    border: 2px solid #779;
+    color: #556;
+    transition: all 0.25s;
+}
