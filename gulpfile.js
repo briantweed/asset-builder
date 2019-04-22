@@ -1,8 +1,10 @@
 'use strict';
 
 
+
+
 /**
- * -- Required Packages --
+ * ----- Required Packages -----
  */
 const fs = require('fs');
 const gulp = require('gulp');
@@ -23,8 +25,10 @@ const zip = require('gulp-zip');
 
 
 
+
+
 /**
- * -- Variables --
+ * ----- Variables -----
  */
 let env = envmod.getData();
 
@@ -64,6 +68,16 @@ let css_file_suffix = env.CSS_FILE_NAME_SUFFIX;
 
 let js_file_name = env.JS_FILE_NAME;
 let js_file_suffix = env.JS_FILE_NAME_SUFFIX;
+
+
+
+
+
+/**
+ * ==============================================================================================
+ */
+
+
 
 
 
@@ -132,7 +146,7 @@ const template_links = () => {
 
 
 /**
- * Create json file containing all template names
+ * Create json file containing template names
  *
  * @param file
  * @param options
@@ -145,42 +159,26 @@ const create_link_list = (file, options) => {
 };
 
 
-
-
-
-
 /**
- * Compile Sass files
- *
- * Compile each development sass file and save as FILENAME.compiled.css
+ * Compile sass files
  */
 const compile_sass = () => {
     return gulp.src('./' + dev_sass_folder + '/**/*.scss')
-        .pipe(sass({
-            includePaths: ['node_modules']
-        }))
-        .pipe(rename({
-            suffix: '.compiled'
-        }))
+        .pipe(sass({includePaths: ['node_modules']}))
+        .pipe(rename({suffix: '.compiled'}))
         .pipe(gulp.dest('./' + dev_css_folder));
 };
 
 
 /**
- * Minify CSS
- *
  * Combine and minify all development css files
  */
 const minify_css = () => {
     return gulp.src('./' + dev_css_folder + '/*.css')
         .pipe(concat(css_file_name + '.css'))
         .pipe(gulp.dest('./' + dist_css_folder))
-        .pipe(cleanCSS({
-            compatibility: 'ie8'
-        }))
-        .pipe(rename({
-            suffix: '.' + css_file_suffix
-        }))
+        .pipe(cleanCSS({compatibility: 'ie8'}))
+        .pipe(rename({suffix: '.' + css_file_suffix}))
         .pipe(gulp.dest('./' + dist_css_folder));
 };
 
@@ -261,14 +259,20 @@ const get_html_links = () => {
 };
 
 
+/**
+ * Delete cached json files
+ */
 const delete_cached_files = (done) => {
     delete require.cache[require.resolve('./src/links.json')];
     delete require.cache[require.resolve('./src/names.json')];
     done();
-}
+};
+
 
 /**
  * Create landing page with links to template files
+ *
+ * @TODO - replace tags in distribution folder instead of on creation
  */
 const create_html_link_page = (done) => {
     let links = template_links();
@@ -298,11 +302,6 @@ const delete_html_names = () => {
 };
 
 
-
-
-
-
-
 /**
  * @Command: gulp setup
  *
@@ -314,7 +313,6 @@ const setup = (done) => {
             fs.mkdirSync(dir);
         }
     });
-    // fs.writeFileSync('./src/favicon-data.json', '{}');
     done();
 };
 
@@ -337,9 +335,7 @@ const minify_js = () => {
         .pipe(concat(js_file_name + '.js'))
         .pipe(gulp.dest('./' + dist_js_folder))
         .pipe(uglify())
-        .pipe(rename({
-            suffix: '.' + js_file_suffix
-        }))
+        .pipe(rename({suffix: '.' + js_file_suffix}))
         .pipe(gulp.dest('./' + dist_js_folder));
 };
 
@@ -352,10 +348,7 @@ const minify_js = () => {
  */
 const compile_html = gulp.series(
     delete_copied_html,
-    gulp.parallel(
-        get_html_links,
-        get_html_names
-    ),
+    gulp.parallel(get_html_links, get_html_names),
     create_html_link_page,
     copy_html
 );
@@ -448,7 +441,7 @@ const compile_images = gulp.series(delete_compressed_images, minify_images);
 /**
  * @Command: gulp template --name filename
  *
- * @TODO - apply replace when template copied to distribution folder
+ * @TODO - replace tags in distribution folder instead of on creation
  * Create an html file
  */
 const template = () => {
@@ -486,12 +479,7 @@ const template = () => {
  * Delete all compiled files
  */
 const clean = gulp.series(
-    gulp.parallel(
-        delete_compiled_sass,
-        deleted_exports,
-        delete_distribution_folders,
-        delete_html_names
-    ),
+    gulp.parallel(delete_compiled_sass, deleted_exports, delete_distribution_folders, delete_html_names),
     setup
 );
 
@@ -505,19 +493,12 @@ const watch = () => {
         './' + dev_css_folder + '/*.css',
         '!./' + dev_css_folder + '/*.compiled.css'
     ], compile_css);
-
     gulp.watch('./' + dev_js_folder + '/*.js', minify_js);
-
     gulp.watch([
         './' + dev_folder + '/*.html',
         './templates/*.html'
-    ], gulp.series(
-        delete_cached_files,
-        compile_html
-    ));
-
+    ], gulp.series(delete_cached_files, compile_html));
     gulp.watch('./' + dev_images_folder + '/*', compile_images);
-
     gulp.watch('./' + dev_favicon_folder + '/' + favicon_name, generate_favicon);
 };
 
@@ -529,9 +510,7 @@ const watch = () => {
  */
 const zip_assets = () => {
     return gulp.src(dist_folder + '/*')
-        .pipe(zip(
-            zip_file_name + '_' + timestamp() + '.zip'
-        ))
+        .pipe(zip(zip_file_name + '_' + timestamp() + '.zip'))
         .pipe(gulp.dest('./' + export_folder));
 };
 
@@ -541,9 +520,7 @@ const zip_assets = () => {
  */
 const test = () => {
     return gulp.src('./')
-        .pipe(notify({
-            message: "Gulp is working", onLast: true
-        }));
+        .pipe(notify({ message: "Gulp is working", onLast: true }));
 };
 
 
@@ -553,15 +530,8 @@ const test = () => {
  * Compile all assets
  */
 const build = gulp.series(
-    gulp.parallel(
-        delete_copied_html,
-        delete_compressed_images
-    ),
-    compile_css,
-    minify_js,
-    compile_html,
-    generate_favicon,
-    minify_images
+    gulp.parallel(delete_copied_html, delete_compressed_images),
+    gulp.parallel(compile_css, minify_js, compile_html, generate_favicon, minify_images)
 );
 
 
@@ -576,9 +546,8 @@ const css_and_js = gulp.parallel(compile_css, minify_js);
 
 
 
-
 /**
- * -- Available user commands --
+ * ----- Gulp Commands -----
  */
 exports.build = build;
 exports.clean = clean;
