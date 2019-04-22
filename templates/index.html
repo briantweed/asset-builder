@@ -9,6 +9,51 @@
         <title>{{ project_title }}</title>
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+        <style>
+            body,html {
+                font-family: Arial, sans-serif;
+            }
+
+            .container {
+                margin: auto;
+                padding:0;
+                width: 50vw;
+            }
+
+            header {
+                text-align: center;
+                margin-bottom: 2rem;
+            }
+
+            section#links > ul {
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+            }
+
+            section#links > ul > li > a {
+                display: block;
+                border: 2px solid #999;
+                border-radius: 5px;
+                margin: 1rem 0;
+                padding: 0.5rem 2rem;
+                text-decoration: none;
+                text-align: center;
+                font-size: 1.25rem;
+                font-weight: 500;
+                color: #666;
+                transition: all 0.3s;
+            }
+
+            section#links ul > li > a:focus ,
+            section#links > ul > li > a:hover {
+                text-decoration: none;
+                border: 2px solid #777;
+                background-color: #0ff;
+                color: #333;
+                transition: all 0.3s;
+            }
+        </style>
     </head>
 
     <body>
@@ -23,9 +68,11 @@
                 </header>
 
                 <section id="links">
-                    {{ links }}
+                    <ul>
+                        {{ links }}
+                    </ul>
                 </section>
-
+                <br>
             </div>
 
         </main>

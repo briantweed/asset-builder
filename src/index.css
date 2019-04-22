@@ -36,8 +36,8 @@ section#links > ul > li > a {
 section#links ul > li > a:focus ,
 section#links > ul > li > a:hover {
     text-decoration: none;
-    border: 2px solid #666;
-    background-color: #eee;
+    border: 2px solid #777;
+    background-color: #0ff;
     color: #333;
     transition: all 0.3s;
 }

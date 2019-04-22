@@ -74,17 +74,233 @@ let js_file_suffix = env.JS_FILE_NAME_SUFFIX;
  */
 const help = (done) => {
     console.log("\n\nThis is a list of all available tasks: \n");
-    console.log("  (default)  -  preform css and js processes");
-    console.log("  build      -  run all processes");
-    console.log("  css        -  compile sass files, combine and minify all css files");
-    console.log("  js         -  combine and minify all js files");
-    console.log("  html       -  copy html files from " + dev_folder + " to " + dist_folder + " folder");
-    console.log("  favicon    -  create favicons from " + dev_favicon_folder + "/" + favicon_name);
-    console.log("  images     -  compress all images in " + dev_images_folder + " and save to " + dist_images_folder );
-    console.log("  zip        -  create zip file from the "  + dist_folder + " folder called "  + zip_file_name + ".zip");
-    console.log("  clean      -  delete all compiled files including exports\n\n");
+    console.log(" (default) -  preform css and js processes");
+    console.log(" build     -  run all processes");
+    console.log(" css       -  compile sass files, combine and minify all css files");
+    console.log(" js        -  combine and minify all js files");
+    console.log(" html      -  copy html files from " + dev_folder + " to " + dist_folder + " folder");
+    console.log(" favicon   -  create favicons from " + dev_favicon_folder + "/" + favicon_name);
+    console.log(" images    -  compress all images in " + dev_images_folder + " and save to " + dist_images_folder );
+    console.log(" zip       -  create zip file from the "  + dist_folder + " folder called "  + zip_file_name + ".zip");
+    console.log(" watch     -  automatically compile when files are updated");
+    console.log(" clean     -  delete all compiled files including exports\n\n");
     done();
 };
+
+
+/**
+ * Capitalize the first letter of a word
+ *
+ * @param string
+ * @returns {string}
+ */
+const capitalize = (string) => {
+    if (typeof string !== 'string') return '';
+    return string.charAt(0).toUpperCase() + string.slice(1)
+};
+
+
+/**
+ * Create timestamp in the format Y_m_d_h_i_s
+ *
+ * @returns {string}
+ */
+const timestamp = () => {
+    return new Date().getFullYear() + '_' +
+        (("0" + (new Date().getMonth() + 1)).slice(-2)) + '_' +
+        (("0" + new Date().getDate()).slice(-2)) + '_' +
+        (("0" + new Date().getHours()).slice(-2)) + '_' +
+        (("0" + new Date().getMinutes()).slice(-2)) + '_' +
+        (("0" + new Date().getSeconds()).slice(-2));
+};
+
+
+/**
+ * Return list containing links for all template files
+ *
+ * @returns {string}
+ */
+const template_links = () => {
+    let string = "";
+    let links = require('./src/links.json');
+    let names = require('./src/names.json');
+    for (let i = 0; i < links.length; i++) {
+        string += "<li class='nav-item'><a class='nav-link' href='" + links[i] + "'>" + capitalize(names[i]) + "</a></li>\n";
+    }
+    return string;
+};
+
+
+/**
+ * Create json file containing all template names
+ *
+ * @param file
+ * @param options
+ * @returns {*}
+ */
+const create_link_list = (file, options) => {
+    return gulp.src('./' + dev_folder + '/*.html')
+        .pipe(filelist(file + '.json', options))
+        .pipe(gulp.dest('./src'));
+};
+
+
+
+
+
+
+/**
+ * Compile Sass files
+ *
+ * Compile each development sass file and save as FILENAME.compiled.css
+ */
+const compile_sass = () => {
+    return gulp.src('./' + dev_sass_folder + '/**/*.scss')
+        .pipe(sass({
+            includePaths: ['node_modules']
+        }))
+        .pipe(rename({
+            suffix: '.compiled'
+        }))
+        .pipe(gulp.dest('./' + dev_css_folder));
+};
+
+
+/**
+ * Minify CSS
+ *
+ * Combine and minify all development css files
+ */
+const minify_css = () => {
+    return gulp.src('./' + dev_css_folder + '/*.css')
+        .pipe(concat(css_file_name + '.css'))
+        .pipe(gulp.dest('./' + dist_css_folder))
+        .pipe(cleanCSS({
+            compatibility: 'ie8'
+        }))
+        .pipe(rename({
+            suffix: '.' + css_file_suffix
+        }))
+        .pipe(gulp.dest('./' + dist_css_folder));
+};
+
+
+/**
+ * Delete compiled sass files
+ */
+const delete_compiled_sass = () => {
+    return del('./' + dev_css_folder + '/*compiled.css');
+};
+
+
+/**
+ * Compress images in development folder
+ */
+const minify_images = () => {
+    return gulp.src('./' + dev_images_folder + '/*')
+        .pipe(image({
+            pngquant: true,
+            optipng: false,
+            zopflipng: true,
+            jpegRecompress: false,
+            jpegoptim: true,
+            mozjpeg: true,
+            gifsicle: true,
+            svgo: true,
+            concurrent: 10
+        }))
+        .pipe(gulp.dest('./' + dist_images_folder));
+};
+
+
+/**
+ * Delete images from distribution folder
+ */
+const delete_compressed_images = () => {
+    return del(dist_images_folder + '/*');
+};
+
+
+/**
+ * Delete all exported files
+ */
+const deleted_exports = () => {
+    return del('./' + export_folder + '/*');
+};
+
+
+/**
+ * Delete distribution folders
+ */
+const delete_distribution_folders = () => {
+    return del(dist_folder + '/*');
+};
+
+
+/**
+ * Delete any existing templates from the distribution folder
+ */
+const delete_copied_html = () => {
+    return del(['./' + dist_folder + '/*.html', '!./' + dist_folder + '/index.html']);
+};
+
+
+/**
+ * Get the names of the html files
+ */
+const get_html_names = () => {
+    return create_link_list('names', { flatten: true, removeExtensions: true });
+};
+
+
+/**
+ * Get the html file links
+ */
+const get_html_links = () => {
+    return create_link_list('links', { flatten: true });
+};
+
+
+const delete_cached_files = (done) => {
+    delete require.cache[require.resolve('./src/links.json')];
+    delete require.cache[require.resolve('./src/names.json')];
+    done();
+}
+
+/**
+ * Create landing page with links to template files
+ */
+const create_html_link_page = (done) => {
+    let links = template_links();
+    gulp.src('./templates/index.html')
+        .pipe(replace('{{ links }}', links))
+        .pipe(replace('{{ project_title }}', project_title))
+        .pipe(replace('{{ project_author }}', project_author))
+        .pipe(gulp.dest(dist_folder));
+    done();
+};
+
+
+/**
+ * Copy html files from development to distribution
+ */
+const copy_html = () => {
+    return gulp.src('./' + dev_folder + '/*.html')
+        .pipe(gulp.dest('./' + dist_folder));
+};
+
+
+/**
+ * Delete files containing list of template names
+ */
+const delete_html_names = () => {
+    return del(['./src/links.json', './src/names.json']);
+};
+
+
+
+
+
 
 
 /**
@@ -100,44 +316,6 @@ const setup = (done) => {
     });
     // fs.writeFileSync('./src/favicon-data.json', '{}');
     done();
-};
-
-
-/**
- * Compile Sass files
- *
- * Compile each development sass file and save as FILENAME.compiled.css
- */
-const compile_sass = () => {
-    return gulp.src('./' + dev_sass_folder + '/**/*.scss')
-        .pipe(sass({
-            includePaths: ['node_modules']
-        }))
-        .pipe(rename({suffix: '.compiled'}))
-        .pipe(gulp.dest('./' + dev_css_folder));
-};
-
-
-/**
- * Minify CSS
- *
- * Combine and minify all development css files
- */
-const minify_css = () => {
-    return gulp.src('./' + dev_css_folder + '/*.css')
-        .pipe(concat(css_file_name + '.css'))
-        .pipe(gulp.dest('./' + dist_css_folder))
-        .pipe(cleanCSS({compatibility: 'ie8'}))
-        .pipe(rename({suffix: '.' + css_file_suffix}))
-        .pipe(gulp.dest('./' + dist_css_folder));
-};
-
-
-/**
- * Delete compiled sass files
- */
-const delete_compiled_sass = () => {
-    return del('./' + dev_css_folder + '/*compiled.css');
 };
 
 
@@ -159,31 +337,28 @@ const minify_js = () => {
         .pipe(concat(js_file_name + '.js'))
         .pipe(gulp.dest('./' + dist_js_folder))
         .pipe(uglify())
-        .pipe(rename({suffix: '.' + js_file_suffix}))
+        .pipe(rename({
+            suffix: '.' + js_file_suffix
+        }))
         .pipe(gulp.dest('./' + dist_js_folder));
 };
 
 
 /**
- * @Command: gulp images
+ * @Command: gulp html
  *
- * Compress all development image files
+ * Copy html files from development to distribution
+ * Create landing page with links to template files
  */
-const minify_images = () => {
-    return gulp.src('./' + dev_images_folder + '/*')
-        .pipe(image({
-            pngquant: true,
-            optipng: false,
-            zopflipng: true,
-            jpegRecompress: false,
-            jpegoptim: true,
-            mozjpeg: true,
-            gifsicle: true,
-            svgo: true,
-            concurrent: 10
-        }))
-        .pipe(gulp.dest('./' + dist_images_folder));
-};
+const compile_html = gulp.series(
+    delete_copied_html,
+    gulp.parallel(
+        get_html_links,
+        get_html_names
+    ),
+    create_html_link_page,
+    copy_html
+);
 
 
 /**
@@ -262,51 +437,12 @@ const generate_favicon = (done) => {
 
 
 /**
- * @Command: gulp zip
+ * @Command: gulp images
  *
- * Zip the distribution folder
+ * Compile scss files, combine and minimise all css files
+ * Combine and minimise all js files
  */
-const zip_assets = () => {
-    return gulp.src(dist_folder + '/*')
-        .pipe(zip(
-            zip_file_name  + '_' +
-            new Date().getFullYear() + '_' +
-            (("0" + (new Date().getMonth() + 1)).slice(-2)) + '_' +
-            (("0" + new Date().getDate()).slice(-2)) + '_' +
-            (("0" + new Date().getHours()).slice(-2)) + '_' +
-            (("0" + new Date().getMinutes()).slice(-2)) + '_' +
-            (("0" + new Date().getSeconds()).slice(-2)) +
-            '.zip'
-        ))
-        .pipe(gulp.dest('./' + export_folder));
-};
-
-
-/**
- * Delete all exported files
- */
-const deleted_exports = () => {
-    return del('./' + export_folder + '/*');
-};
-
-
-/**
- * Delete distribution folders
- */
-const delete_distribution_folders = () => {
-    return del(dist_folder + '/*');
-};
-
-
-/**
- * @Command: gulp clean
- *
- * Delete all compiled files
- */
-const clean = gulp.series(
-    gulp.parallel(delete_compiled_sass, deleted_exports, delete_distribution_folders),
-    setup
-);
+const compile_images = gulp.series(delete_compressed_images, minify_images);
 
 
 /**
@@ -322,6 +458,7 @@ const template = () => {
         if (!fs.existsSync('./' + dev_folder + '/' + page_name)) {
             return gulp.src('./templates/' + template_name + '.html')
                 .pipe(replace('{{ page_name }}', capitalize(options.name)))
+                .pipe(replace('{{ links }}', template_links()))
                 .pipe(replace('{{ project_title }}', project_title))
                 .pipe(replace('{{ theme_color }}', favicon_theme_color))
                 .pipe(replace('{{ tile_color }}', favicon_tile_color))
@@ -333,86 +470,81 @@ const template = () => {
                 .pipe(gulp.dest('./' + dev_folder))
                 .pipe(notify({ message: page_name + ' created', onLast: true }))
         } else {
-            return gulp.src('/').pipe(notify({ message: 'Error: ' + page_name + ' already exists', emitError: true }));
+            return gulp.src('/')
+                .pipe(notify({ message: 'Error: ' + page_name + ' already exists', emitError: true }));
         }
     } else {
-        return gulp.src('/').pipe(notify({ message: 'Error: filename required', emitError: true }));
+        return gulp.src('/')
+            .pipe(notify({ message: 'Error: filename required', emitError: true }));
     }
 };
 
 
 /**
- * Delete any existing templates from the distribution folder
- */
-const delete_copied_html = () => {
-    return del(['./' + dist_folder + '/*.html', '!./' + dist_folder + '/index.html']);
-};
-
-
-
-/**
- * Get the names of the html files
- */
-const get_html_names = () => {
-    return gulp.src('./' + dev_folder + '/*.html')
-        .pipe(filelist('names.json', { flatten: true, removeExtensions: true }))
-        .pipe(gulp.dest('./src'));
-};
-
-
-/**
- * Get the html file links
- */
-const get_html_links = () => {
-    return gulp.src('./' + dev_folder + '/*.html')
-        .pipe(filelist('links.json', { flatten: true}))
-        .pipe(gulp.dest('./src'));
-};
-
-
-/**
- * Create landing page with links to template files
- */
-const create_html_link_page = (done) => {
-    let links = require('./src/links.json');
-    let names = require('./src/names.json');
-    let string = "<ul>\n";
-    for (let i = 0; i < links.length; i++) {
-        string += "\t\t\t\t\t\t<li><a href='" + links[i] + "'>" + capitalize(names[i]) + "</a></li>\n";
-    }
-    string += "\t\t\t\t\t</ul>";
-    gulp.src('./templates/index.html')
-        .pipe(replace('{{ links }}', string))
-        .pipe(replace('{{ project_title }}', project_title))
-        .pipe(replace('{{ project_author }}', project_author))
-        .pipe(gulp.dest(dist_folder));
-    done();
-};
-
-
-/**
- * Copy html files from development to distribution
- */
-const copy_html = () => {
-    return gulp.src('./' + dev_folder + '/*.html').pipe(gulp.dest('./' + dist_folder));
-};
-
-
-/**
- * Delete files containing list of template names
- */
-const delete_html_names = () => {
-    return del(['./src/links.json', './src/names.json']);
-};
-
-
-/**
- * @Command: gulp html
+ * @Command: gulp clean
  *
- * Copy html files from development to distribution
- * Create landing page with links to template files
+ * Delete all compiled files
  */
-const compile_html = gulp.series( delete_copied_html, gulp.parallel(get_html_links ,get_html_names), gulp.parallel(create_html_link_page, copy_html), delete_html_names);
+const clean = gulp.series(
+    gulp.parallel(
+        delete_compiled_sass,
+        deleted_exports,
+        delete_distribution_folders,
+        delete_html_names
+    ),
+    setup
+);
+
+
+/**
+ * @Command: gulp watch
+ */
+const watch = () => {
+    gulp.watch([
+        './' + dev_sass_folder + '/*.scss',
+        './' + dev_css_folder + '/*.css',
+        '!./' + dev_css_folder + '/*.compiled.css'
+    ], compile_css);
+
+    gulp.watch('./' + dev_js_folder + '/*.js', minify_js);
+
+    gulp.watch([
+        './' + dev_folder + '/*.html',
+        './templates/*.html'
+    ], gulp.series(
+        delete_cached_files,
+        compile_html
+    ));
+
+    gulp.watch('./' + dev_images_folder + '/*', compile_images);
+
+    gulp.watch('./' + dev_favicon_folder + '/' + favicon_name, generate_favicon);
+};
+
+
+/**
+ * @Command: gulp zip
+ *
+ * Zip the distribution folder
+ */
+const zip_assets = () => {
+    return gulp.src(dist_folder + '/*')
+        .pipe(zip(
+            zip_file_name + '_' + timestamp() + '.zip'
+        ))
+        .pipe(gulp.dest('./' + export_folder));
+};
+
+
+/**
+ * @Command: gulp test
+ */
+const test = () => {
+    return gulp.src('./')
+        .pipe(notify({
+            message: "Gulp is working", onLast: true
+        }));
+};
 
 
 /**
@@ -420,8 +552,16 @@ const compile_html = gulp.series( delete_copied_html, gulp.parallel(get_html_lin
  *
  * Compile all assets
  */
-const build = gulp.series(clean,
-    gulp.parallel(compile_css, minify_js, compile_html, generate_favicon, minify_images)
+const build = gulp.series(
+    gulp.parallel(
+        delete_copied_html,
+        delete_compressed_images
+    ),
+    compile_css,
+    minify_js,
+    compile_html,
+    generate_favicon,
+    minify_images
 );
 
 
@@ -434,47 +574,23 @@ const build = gulp.series(clean,
 const css_and_js = gulp.parallel(compile_css, minify_js);
 
 
-/**
- * @Command: gulp test
- */
-const test = () => {
-    return gulp.src('./').pipe(notify({ message: "Gulp is working", onLast: true }));
-};
+
 
 
 /**
  * -- Available user commands --
  */
-exports.help = help;
-exports.setup = setup;
-exports.default = css_and_js;
 exports.build = build;
-exports.css = compile_css;
-exports.js = minify_js;
-exports.favicon = generate_favicon;
-exports.images = minify_images;
-exports.html = compile_html;
-exports.zip = zip_assets;
 exports.clean = clean;
-exports.test = test;
+exports.css = compile_css;
+exports.default = css_and_js;
+exports.favicon = generate_favicon;
+exports.help = help;
+exports.html = compile_html;
+exports.images = compile_images;
+exports.js = minify_js;
+exports.setup = setup;
 exports.template = template;
-
-
-
-
-
-/**
- * -- Helper Function --
- */
-
-
-/**
- * Capitalize the first letter of a word
- *
- * @param string
- * @returns {string}
- */
-const capitalize = (string) => {
-    if (typeof string !== 'string') return '';
-    return string.charAt(0).toUpperCase() + string.slice(1)
-}
+exports.test = test;
+exports.watch = watch;
+exports.zip = zip_assets;
