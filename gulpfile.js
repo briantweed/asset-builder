@@ -93,8 +93,10 @@ let tags = ['project_author', 'project_title', 'template_name', 'favicon_name', 
  * @returns {string}
  */
 const capitalize = (string) => {
-    if (typeof string !== 'string') return '';
-    return string.charAt(0).toUpperCase() + string.slice(1)
+    return string.toLowerCase()
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
 };
 
 
