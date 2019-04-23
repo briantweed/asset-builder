@@ -50,7 +50,8 @@ let dist_js_folder = dist_folder + '/' + env.DISTRIBUTION_JS_FOLDER_NAME;
 
 let folders = [
     export_folder,
-    dev_folder, dev_css_folder, dev_favicon_folder, dev_fonts_folder, dev_images_folder, dev_js_folder, dev_sass_folder,
+    dev_folder, dev_css_folder, dev_favicon_folder, dev_fonts_folder, 
+    dev_images_folder, dev_js_folder, dev_sass_folder,
     dist_folder, dist_css_folder, dist_fonts_folder, dist_images_folder, dist_js_folder
 ];
 
@@ -79,27 +80,6 @@ let js_file_suffix = env.JS_FILE_NAME_SUFFIX;
 
 
 
-
-
-/**
- * @Command: gulp help
- *
- * List all of the available gulp commands
- */
-const help = (done) => {
-    console.log("\n\nThis is a list of all available tasks: \n");
-    console.log(" (default) -  preform css and js processes");
-    console.log(" build     -  run all processes");
-    console.log(" css       -  compile sass files, combine and minify all css files");
-    console.log(" js        -  combine and minify all js files");
-    console.log(" html      -  copy html files from " + dev_folder + " to " + dist_folder + " folder");
-    console.log(" favicon   -  create favicons from " + dev_favicon_folder + "/" + favicon_name);
-    console.log(" images    -  compress all images in " + dev_images_folder + " and save to " + dist_images_folder );
-    console.log(" zip       -  create zip file from the "  + dist_folder + " folder called "  + zip_file_name + ".zip");
-    console.log(" watch     -  automatically compile when files are updated");
-    console.log(" clean     -  delete all compiled files including exports\n\n");
-    done();
-};
 
 
 /**
@@ -188,6 +168,19 @@ const minify_css = () => {
  */
 const delete_compiled_sass = () => {
     return del('./' + dev_css_folder + '/*compiled.css');
+};
+
+
+/**
+ * Combine and minify all development js files
+ */
+const minify_js = () => {
+    return gulp.src('./' + dev_js_folder + '/*.js')
+        .pipe(concat(js_file_name + '.js'))
+        .pipe(gulp.dest('./' + dist_js_folder))
+        .pipe(uglify())
+        .pipe(rename({suffix: '.' + js_file_suffix}))
+        .pipe(gulp.dest('./' + dist_js_folder));
 };
 
 
@@ -303,61 +296,7 @@ const delete_html_names = () => {
 
 
 /**
- * @Command: gulp setup
- *
- * Create the development and distribution folders
- */
-const setup = (done) => {
-    folders.forEach(dir => {
-        if(!fs.existsSync(dir)) {
-            fs.mkdirSync(dir);
-        }
-    });
-    done();
-};
-
-
-/**
- * @Command: gulp css
- *
- * Compile scss files, combine and minimise all css files, save to distribution folder
- */
-const compile_css = gulp.series(compile_sass, minify_css, delete_compiled_sass);
-
-
-/**
- * @Command: gulp js
- *
- * Combine and minify all development js files
- */
-const minify_js = () => {
-    return gulp.src('./' + dev_js_folder + '/*.js')
-        .pipe(concat(js_file_name + '.js'))
-        .pipe(gulp.dest('./' + dist_js_folder))
-        .pipe(uglify())
-        .pipe(rename({suffix: '.' + js_file_suffix}))
-        .pipe(gulp.dest('./' + dist_js_folder));
-};
-
-
-/**
- * @Command: gulp html
- *
- * Copy html files from development to distribution
- * Create landing page with links to template files
- */
-const compile_html = gulp.series(
-    delete_copied_html,
-    gulp.parallel(get_html_links, get_html_names),
-    create_html_link_page,
-    copy_html
-);
-
-
-/**
- * @Command: gulp favicon
- *
- * Generate all favicon images and files
+ * Create favicon images and files
  */
 const generate_favicon = (done) => {
     let master_favicon = dev_favicon_folder + '/' + favicon_name;
@@ -430,21 +369,10 @@ const generate_favicon = (done) => {
 
 
 /**
- * @Command: gulp images
- *
- * Compile scss files, combine and minimise all css files
- * Combine and minimise all js files
- */
-const compile_images = gulp.series(delete_compressed_images, minify_images);
-
-
-/**
- * @Command: gulp template --name filename
- *
+ * Creat html file
  * @TODO - replace tags in distribution folder instead of on creation
- * Create an html file
  */
-const template = () => {
+const create_template = () => {
     let options = minimist(process.argv.slice(3));
     if (options.name !== undefined && options.name !== true) {
         let page_name = options.name + '.html';
@@ -474,38 +402,19 @@ const template = () => {
 
 
 /**
- * @Command: gulp clean
- *
- * Delete all compiled files
+ * Create folders based on .env file variables
  */
-const clean = gulp.series(
-    gulp.parallel(delete_compiled_sass, deleted_exports, delete_distribution_folders, delete_html_names),
-    setup
-);
-
-
-/**
- * @Command: gulp watch
- */
-const watch = () => {
-    gulp.watch([
-        './' + dev_sass_folder + '/*.scss',
-        './' + dev_css_folder + '/*.css',
-        '!./' + dev_css_folder + '/*.compiled.css'
-    ], compile_css);
-    gulp.watch('./' + dev_js_folder + '/*.js', minify_js);
-    gulp.watch([
-        './' + dev_folder + '/*.html',
-        './templates/*.html'
-    ], gulp.series(delete_cached_files, compile_html));
-    gulp.watch('./' + dev_images_folder + '/*', compile_images);
-    gulp.watch('./' + dev_favicon_folder + '/' + favicon_name, generate_favicon);
+const create_folders = (done) => {
+    folders.forEach(dir => {
+        if(!fs.existsSync(dir)) {
+            fs.mkdirSync(dir);
+        }
+    });
+    done();
 };
 
 
 /**
- * @Command: gulp zip
- *
  * Zip the distribution folder
  */
 const zip_assets = () => {
@@ -515,33 +424,135 @@ const zip_assets = () => {
 };
 
 
+
+
+
+/**
+ * @Command: gulp help
+ *
+ * List all of the available gulp commands
+ */
+const gulp_help = (done) => {
+    console.log("\n\nThis is a list of all available tasks: \n");
+    console.log(" (default) -  preform css and js processes");
+    console.log(" setup     -  build folders based on .env file variables");
+    console.log(" build     -  run all processes");
+    console.log(" css       -  compile sass files, combine and minify all css files");
+    console.log(" js        -  combine and minify all js files");
+    console.log(" html      -  copy html files from " + dev_folder + " to " + dist_folder + " folder");
+    console.log(" favicon   -  create favicons from " + dev_favicon_folder + "/" + favicon_name);
+    console.log(" images    -  compress all images in " + dev_images_folder + " and save to " + dist_images_folder );
+    console.log(" clean     -  delete all compiled files including exports");
+    console.log(" watch     -  automatically compile when files are updated");
+    console.log(" zip       -  create zip file from the "  + dist_folder + " folder called "  + zip_file_name + ".zip\n\n");
+    done();
+};
+
+
+/**
+ * @Command: gulp setup
+ */
+const gulp_setup = gulp.series(create_folders);
+
+
+/**
+ * @Command: gulp css
+ */
+const gulp_css = gulp.series(compile_sass, minify_css, delete_compiled_sass);
+
+
+/**
+ * @Command: gulp js
+ */
+const gulp_js = gulp.series(minify_js);
+
+
+/**
+ * @Command: gulp
+ */
+const gulp_default = gulp.parallel(gulp_css, gulp_js);
+
+
+/**
+ * @Command: gulp favicon
+ */
+const gulp_favicon = gulp.series(generate_favicon);
+
+
+/**
+ * @Command: gulp html
+ */
+const gulp_html = gulp.series(
+    delete_copied_html,
+    gulp.parallel(get_html_links, get_html_names),
+    create_html_link_page,
+    copy_html
+);
+
+
+/**
+ * @Command: gulp images
+ */
+const gulp_images = gulp.series(delete_compressed_images, minify_images);
+
+
+/**
+ * @Command: gulp clean
+ */
+const gulp_clean = gulp.series(
+    gulp.parallel(delete_compiled_sass, deleted_exports, delete_distribution_folders, delete_html_names),
+    setup
+);
+
+
 /**
  * @Command: gulp test
  */
-const test = () => {
+const gulp_test = () => {
     return gulp.src('./')
         .pipe(notify({ message: "Gulp is working", onLast: true }));
 };
 
 
 /**
- * @Command: gulp build
- *
- * Compile all assets
+ * @Command: gulp template --name FILENAME
  */
-const build = gulp.series(
+const gulp_template = gulp.series(create_template);
+
+
+/**
+ * @Command: gulp zip
+ */
+const gulp_zip = gulp.series(zip_assets);
+
+
+/**
+ * @Command: gulp build
+ */
+const gulp_build = gulp.series(
     gulp.parallel(delete_copied_html, delete_compressed_images),
-    gulp.parallel(compile_css, minify_js, compile_html, generate_favicon, minify_images)
+    gulp.parallel(gulp_css, gulp_js, gulp_html, generate_favicon, minify_images)
 );
 
 
 /**
- * @Command: gulp
- *
- * Compile scss files, combine and minimise all css files
- * Combine and minimise all js files
+ * @Command: gulp watch
  */
-const css_and_js = gulp.parallel(compile_css, minify_js);
+const gulp_watch = () => {
+    gulp.watch([
+        './' + dev_sass_folder + '/*.scss',
+        './' + dev_css_folder + '/*.css',
+        '!./' + dev_css_folder + '/*.compiled.css'
+    ], gulp_css);
+    gulp.watch('./' + dev_js_folder + '/*.js', gulp_js);
+    gulp.watch([
+        './' + dev_folder + '/*.html',
+        './templates/*.html'
+    ], gulp.series(delete_cached_files, gulp_html));
+    gulp.watch('./' + dev_images_folder + '/*', gulp_images);
+    gulp.watch('./' + dev_favicon_folder + '/' + favicon_name, generate_favicon);
+};
+
 
 
 
@@ -549,17 +560,17 @@ const css_and_js = gulp.parallel(compile_css, minify_js);
 /**
  * ----- Gulp Commands -----
  */
-exports.build = build;
-exports.clean = clean;
-exports.css = compile_css;
-exports.default = css_and_js;
-exports.favicon = generate_favicon;
-exports.help = help;
-exports.html = compile_html;
-exports.images = compile_images;
-exports.js = minify_js;
-exports.setup = setup;
-exports.template = template;
-exports.test = test;
-exports.watch = watch;
-exports.zip = zip_assets;
+exports.build = gulp_build;
+exports.clean = gulp_clean;
+exports.css = gulp_css;
+exports.default = gulp_default;
+exports.favicon = gulp_favicon;
+exports.help = gulp_help;
+exports.html = gulp_html;
+exports.images = gulp_images;
+exports.js = gulp_js;
+exports.setup = gulp_setup;
+exports.template = gulp_template;
+exports.test = gulp_test;
+exports.watch = gulp_watch;
+exports.zip = gulp_zip;
