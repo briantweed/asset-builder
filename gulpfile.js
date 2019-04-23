@@ -224,7 +224,7 @@ const deleted_exports = () => {
  * Delete distribution folders
  */
 const delete_distribution_folders = () => {
-    return del(dist_folder + '/*');
+    return del('./' + dist_folder + '/**/*.*');
 };
 
 
@@ -499,10 +499,7 @@ const gulp_images = gulp.series(delete_compressed_images, minify_images);
 /**
  * @Command: gulp clean
  */
-const gulp_clean = gulp.series(
-    gulp.parallel(delete_compiled_sass, deleted_exports, delete_distribution_folders, delete_html_names),
-    gulp_setup
-);
+const gulp_clean = gulp.parallel(delete_compiled_sass, deleted_exports, delete_distribution_folders, delete_html_names);
 
 
 /**
@@ -517,7 +514,7 @@ const gulp_test = () => {
 /**
  * @Command: gulp template --name FILENAME
  */
-const gulp_template = gulp.series(create_template);
+const gulp_template = gulp.series(gulp.parallel(get_html_links, get_html_names), create_template);
 
 
 /**
