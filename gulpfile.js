@@ -513,8 +513,7 @@ const gulp_clean = gulp.parallel(delete_compiled_sass, deleted_exports, delete_d
  * @Command: gulp test
  */
 const gulp_test = () => {
-    return gulp.src('./')
-        .pipe(notify({ message: "Gulp is working", onLast: true }));
+    return gulp.src('./').pipe(notify({ message: "Gulp is working", onLast: true }));
 };
 
 
@@ -535,7 +534,7 @@ const gulp_zip = gulp.series(zip_assets);
  */
 const gulp_build = gulp.series(
     gulp.parallel(delete_copied_html, delete_compressed_images),
-    gulp.parallel(gulp_css, gulp_js, gulp_html, generate_favicon, minify_images)
+    gulp.parallel(gulp_css, gulp_js, gulp_html, gulp_favicon, gulp_images)
 );
 
 
@@ -548,13 +547,14 @@ const gulp_watch = () => {
         './' + dev_css_folder + '/*.css',
         '!./' + dev_css_folder + '/*.compiled.css'
     ], gulp_css);
+
     gulp.watch('./' + dev_js_folder + '/*.js', gulp_js);
-    gulp.watch([
-        './' + dev_folder + '/*.html',
-        './templates/*.html'
-    ], gulp.series(delete_cached_files, gulp_html));
+
+    gulp.watch('./' + dev_folder + '/*.html', gulp.series(delete_cached_files, gulp_html));
+
     gulp.watch('./' + dev_images_folder + '/*', gulp_images);
-    gulp.watch('./' + dev_favicon_folder + '/' + favicon_name, generate_favicon);
+
+    gulp.watch('./' + dev_favicon_folder + '/' + favicon_name, gulp_favicon);
 };
 
 
