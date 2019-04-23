@@ -456,12 +456,6 @@ const gulp_help = (done) => {
 
 
 /**
- * @Command: gulp setup
- */
-const gulp_setup = gulp.series(create_folders);
-
-
-/**
  * @Command: gulp css
  */
 const gulp_css = gulp.series(compile_sass, minify_css, delete_compiled_sass);
@@ -556,6 +550,12 @@ const gulp_watch = () => {
 
     gulp.watch('./' + dev_favicon_folder + '/' + favicon_name, gulp_favicon);
 };
+
+
+/**
+ * @Command: gulp setup
+ */
+const gulp_setup = gulp.series(create_folders, gulp_html);
 
 
 
