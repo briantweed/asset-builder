@@ -70,6 +70,10 @@ let css_file_suffix = env.CSS_FILE_NAME_SUFFIX;
 let js_file_name = env.JS_FILE_NAME;
 let js_file_suffix = env.JS_FILE_NAME_SUFFIX;
 
+let tags = ['project_author', 'project_title', 'template_name', 'favicon_name', 'favicon_tile_color', 'favicon_theme_color',
+    'zip_file_name', 'css_file_name', 'css_file_suffix', 'js_file_name', 'js_file_suffix',
+];
+
 
 
 
@@ -268,11 +272,7 @@ const delete_cached_files = (done) => {
  * @TODO - replace tags in distribution folder instead of on creation
  */
 const create_html_link_page = (done) => {
-    let links = template_links();
     gulp.src('./templates/index.html')
-        .pipe(replace('{{ links }}', links))
-        .pipe(replace('{{ project_title }}', project_title))
-        .pipe(replace('{{ project_author }}', project_author))
         .pipe(gulp.dest(dist_folder));
     done();
 };
@@ -286,6 +286,20 @@ const copy_html = () => {
         .pipe(gulp.dest('./' + dist_folder));
 };
 
+
+const replace_tags = () => {
+    return gulp.src('./' + dist_folder + '/*.html')
+        .pipe(replace('{{ project_author }}', project_author))
+        .pipe(replace('{{ links }}', template_links()))
+        .pipe(replace('{{ project_title }}', project_title))
+        .pipe(replace('{{ theme_color }}', favicon_theme_color))
+        .pipe(replace('{{ tile_color }}', favicon_tile_color))
+        .pipe(replace('{{ css_file_name }}', css_file_name))
+        .pipe(replace('{{ css_file_suffix }}', css_file_suffix))
+        .pipe(replace('{{ js_file_name }}', js_file_name))
+        .pipe(replace('{{ js_file_suffix }}', js_file_suffix))
+        .pipe(gulp.dest('./' + dist_folder));
+}
 
 /**
  * Delete files containing list of template names
@@ -379,14 +393,6 @@ const create_template = () => {
         if (!fs.existsSync('./' + dev_folder + '/' + page_name)) {
             return gulp.src('./templates/' + template_name + '.html')
                 .pipe(replace('{{ page_name }}', capitalize(options.name)))
-                .pipe(replace('{{ links }}', template_links()))
-                .pipe(replace('{{ project_title }}', project_title))
-                .pipe(replace('{{ theme_color }}', favicon_theme_color))
-                .pipe(replace('{{ tile_color }}', favicon_tile_color))
-                .pipe(replace('{{ css_file_name }}', css_file_name))
-                .pipe(replace('{{ css_file_suffix }}', css_file_suffix))
-                .pipe(replace('{{ js_file_name }}', js_file_name))
-                .pipe(replace('{{ js_file_suffix }}', js_file_suffix))
                 .pipe(rename(page_name))
                 .pipe(gulp.dest('./' + dev_folder))
                 .pipe(notify({ message: page_name + ' created', onLast: true }))
@@ -486,7 +492,8 @@ const gulp_html = gulp.series(
     delete_copied_html,
     gulp.parallel(get_html_links, get_html_names),
     create_html_link_page,
-    copy_html
+    copy_html,
+    replace_tags
 );
 
 
