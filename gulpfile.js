@@ -228,7 +228,9 @@ const deleted_exports = () => {
  * Delete distribution folders
  */
 const delete_distribution_folders = () => {
-    return del('./' + dist_folder + '/**/*.*');
+    return del(['./' + dist_folder + '/**/*.*', '!./' + dist_folder + '/index.html']);
+
+
 };
 
 
@@ -268,8 +270,6 @@ const delete_cached_files = (done) => {
 
 /**
  * Create landing page with links to template files
- *
- * @TODO - replace tags in distribution folder instead of on creation
  */
 const create_html_link_page = (done) => {
     gulp.src('./templates/index.html')
@@ -384,7 +384,6 @@ const generate_favicon = (done) => {
 
 /**
  * Creat html file
- * @TODO - replace tags in distribution folder instead of on creation
  */
 const create_template = () => {
     let options = minimist(process.argv.slice(3));
@@ -483,11 +482,7 @@ const gulp_favicon = gulp.series(generate_favicon);
  * @Command: gulp html
  */
 const gulp_html = gulp.series(
-    delete_copied_html,
-    gulp.parallel(get_html_links, get_html_names),
-    create_html_link_page,
-    copy_html,
-    replace_tags
+    delete_copied_html, get_html_links, get_html_names, create_html_link_page, copy_html, replace_tags
 );
 
 
@@ -500,7 +495,9 @@ const gulp_images = gulp.series(delete_compressed_images, minify_images);
 /**
  * @Command: gulp clean
  */
-const gulp_clean = gulp.parallel(delete_compiled_sass, deleted_exports, delete_distribution_folders, delete_html_names);
+const gulp_clean = gulp.parallel(
+    delete_compiled_sass, deleted_exports, delete_distribution_folders, delete_html_names
+);
 
 
 /**
@@ -512,9 +509,9 @@ const gulp_test = () => {
 
 
 /**
- * @Command: gulp template --name FILENAME
+ * @Command: gulp template --name "FILENAME"
  */
-const gulp_template = gulp.series(gulp.parallel(get_html_links, get_html_names), create_template);
+const gulp_template = gulp.series(create_template);
 
 
 /**
@@ -527,8 +524,7 @@ const gulp_zip = gulp.series(zip_assets);
  * @Command: gulp build
  */
 const gulp_build = gulp.series(
-    gulp.parallel(delete_copied_html, delete_compressed_images),
-    gulp.parallel(gulp_css, gulp_js, gulp_html, gulp_favicon, gulp_images)
+    delete_copied_html, delete_compressed_images, gulp_css, gulp_js, gulp_html, gulp_favicon, gulp_images
 );
 
 
@@ -541,13 +537,9 @@ const gulp_watch = () => {
         './' + dev_css_folder + '/*.css',
         '!./' + dev_css_folder + '/*.compiled.css'
     ], gulp_css);
-
     gulp.watch('./' + dev_js_folder + '/*.js', gulp_js);
-
     gulp.watch('./' + dev_folder + '/*.html', gulp.series(delete_cached_files, gulp_html));
-
     gulp.watch('./' + dev_images_folder + '/*', gulp_images);
-
     gulp.watch('./' + dev_favicon_folder + '/' + favicon_name, gulp_favicon);
 };
 

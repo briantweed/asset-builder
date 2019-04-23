@@ -11,6 +11,7 @@ HTML_TEMPLATE_FILE_NAME = template
 
 > *Make sure to include the spaces between the brackets and the tag*
 
+- {{ project_author }}
 - {{ page_name }}
 - {{ project_title }}
 - {{ theme_color }}
