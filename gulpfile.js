@@ -501,7 +501,7 @@ const gulp_images = gulp.series(delete_compressed_images, minify_images);
  */
 const gulp_clean = gulp.series(
     gulp.parallel(delete_compiled_sass, deleted_exports, delete_distribution_folders, delete_html_names),
-    setup
+    gulp_setup
 );
 
 
