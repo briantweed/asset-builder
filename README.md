@@ -12,6 +12,8 @@
 
 This asset builder uses Gulp 4.0. Make sure you have the necessary versions of Node.js and NPM installed.
 
+Clone or download this repositiory locally to a new folder.
+
 Run `npm install`
 
 In the `.env` file, set you project variables. Below are the default settings:
