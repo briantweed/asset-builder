@@ -209,7 +209,7 @@ const minify_images = () => {
  * Delete images from distribution folder
  */
 const delete_compressed_images = () => {
-    return del(dist_images_folder + '/*');
+    return del('./' + dist_images_folder + '/*');
 };
 
 
