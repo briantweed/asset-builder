@@ -72,15 +72,10 @@ DISTRIBUTION_JS_FOLDER_NAME = js
 ```
 
 
-Once completed run:
-```
-gulp setup
-```
-This will generate you folder structure. You can now add the necessary files to you development folders.
+Once completed run: `gulp setup`. This will generate you folder structure. 
 
-## How To Use
-
-@todo - write this
+You can next run `gulp watch` which will listen for any changes to your development folders. 
+Alternatively you can run each gulp command individually when needed.
 
 ## Gulp Commands
 
@@ -92,9 +87,22 @@ The main gulp commands are:
 - `gulp css` - compile sass, combine and minify css files, save to distribution folder
 - `gulp js` - combine and minify css files, save to distribution folder
 - `gulp html` - copy html from development to distribution, creates page containing links to html pages
+- `gulp fonts` - copy fonts from development to distribution
 - `gulp template --name FILENAME` - create a new html file
 - `gulp favicon` - generate favicon files
 - `gulp images` - compress all images and save to distribution folder
 - `gulp zip` - zip distribution folder and save to export folder
 - `gulp clean` - delete all compiled files
+
+## React
+
+Currently includes a very basic React app. This can be started by running `npm start`. Its best to do this after `gulp watch` on a new project or after an inital `gulp build` has been performed.
+
+### Recap
+
+- `npm install`
+- `.env` file settings
+- `gulp setup`
+- `gulp watch`
+- `npm start`
 
