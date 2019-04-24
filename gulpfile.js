@@ -87,16 +87,26 @@ let tags = ['project_author', 'project_title', 'template_name', 'favicon_name', 
 
 
 /**
- * Capitalize the first letter of a word
+ * ucwords the first letter of each word
  *
  * @param string
  * @returns {string}
  */
-const capitalize = (string) => {
+const ucwords = (string) => {
     return string.toLowerCase()
-        .split(' ')
+        .split(/[ -_]+/)
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ');
+};
+
+/**
+ * Sluggify the string
+ *
+ * @param string
+ * @returns {string}
+ */
+const slug = (string) => {
+    return string.toLowerCase().replace(/[\W_]+/g,"-");
 };
 
 
@@ -116,16 +126,15 @@ const timestamp = () => {
 
 
 /**
- * Return list containing links for all template files
+ * Return list of template file names
  *
  * @returns {string}
  */
 const template_links = () => {
     let string = "";
-    let links = require('./src/links.json');
     let names = require('./src/names.json');
-    for (let i = 0; i < links.length; i++) {
-        string += "<li class='nav-item'><a class='nav-link' href='" + links[i] + "'>" + capitalize(names[i]) + "</a></li>\n";
+    for (let i = 0; i < names.length; i++) {
+        string += "<li class='nav-item'><a class='nav-link' href='" + names[i] + ".html'>" + ucwords(names[i]) + "</a></li>\n";
     }
     return string;
 };
@@ -253,18 +262,9 @@ const get_html_names = () => {
 
 
 /**
- * Get the html file links
- */
-const get_html_links = () => {
-    return create_link_list('links', { flatten: true });
-};
-
-
-/**
  * Delete cached json files
  */
 const delete_cached_files = (done) => {
-    delete require.cache[require.resolve('./src/links.json')];
     delete require.cache[require.resolve('./src/names.json')];
     done();
 };
@@ -307,7 +307,7 @@ const replace_tags = () => {
  * Delete files containing list of template names
  */
 const delete_html_names = () => {
-    return del(['./src/links.json', './src/names.json']);
+    return del('./src/names.json');
 };
 
 
@@ -390,10 +390,10 @@ const generate_favicon = (done) => {
 const create_template = () => {
     let options = minimist(process.argv.slice(3));
     if (options.name !== undefined && options.name !== true) {
-        let page_name = options.name + '.html';
+        let page_name = slug(options.name) + '.html';
         if (!fs.existsSync('./' + dev_folder + '/' + page_name)) {
             return gulp.src('./templates/' + template_name + '.html')
-                .pipe(replace('{{ page_name }}', capitalize(options.name)))
+                .pipe(replace('{{ page_name }}', ucwords(options.name)))
                 .pipe(rename(page_name))
                 .pipe(gulp.dest('./' + dev_folder))
                 .pipe(notify({ message: page_name + ' created', onLast: true }))
@@ -441,15 +441,16 @@ const zip_assets = () => {
  */
 const gulp_help = (done) => {
     console.log("\n\nThis is a list of all available tasks: \n");
-    console.log(" (default) -  preform css and js processes");
-    console.log(" setup     -  build folders based on .env file variables");
+    console.log(" (default) -  compile css and js");
+    console.log(" setup     -  setup project folders based on .env file");
     console.log(" build     -  run all processes");
     console.log(" css       -  compile sass files, combine and minify all css files");
     console.log(" js        -  combine and minify all js files");
+    console.log(" template  -  create html file `gulp template --name FILENAME` (.html not required)");
     console.log(" html      -  copy html files from " + dev_folder + " to " + dist_folder + " folder");
-    console.log(" favicon   -  create favicons from " + dev_favicon_folder + "/" + favicon_name);
+    console.log(" favicon   -  create favicons from " + dev_favicon_folder + "/" + favicon_name + " image");
     console.log(" images    -  compress all images in " + dev_images_folder + " and save to " + dist_images_folder );
-    console.log(" clean     -  delete all compiled files including exports");
+    console.log(" clean     -  delete all compiled files");
     console.log(" watch     -  automatically compile when files are updated");
     console.log(" zip       -  create zip file from the "  + dist_folder + " folder called "  + zip_file_name + ".zip\n\n");
     done();
@@ -484,7 +485,7 @@ const gulp_favicon = gulp.series(generate_favicon);
  * @Command: gulp html
  */
 const gulp_html = gulp.series(
-    delete_copied_html, get_html_links, get_html_names, create_html_link_page, copy_html, replace_tags
+    delete_copied_html, get_html_names, create_html_link_page, copy_html, replace_tags
 );
 
 
