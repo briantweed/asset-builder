@@ -271,6 +271,15 @@ const create_html_link_page = (done) => {
 
 
 /**
+ * Copy fonts from development to distribution
+ */
+const copy_fonts = () => {
+    return gulp.src('./' + dev_fonts_folder + '/*.html')
+        .pipe(gulp.dest('./' + dist_fonts_folder));
+};
+
+
+/**
  * Copy html files from development to distribution
  */
 const copy_html = () => {
@@ -439,6 +448,7 @@ const gulp_help = (done) => {
     console.log(" build     -  run all processes");
     console.log(" css       -  compile sass files, combine and minify all css files");
     console.log(" js        -  combine and minify all js files");
+    console.log(" font      -  copy font to "+ dist_folder + " folder");
     console.log(" template  -  create html file `gulp template --name FILENAME` (.html not required)");
     console.log(" html      -  copy html files from " + dev_folder + " to " + dist_folder + " folder");
     console.log(" favicon   -  create favicons from " + dev_favicon_folder + "/" + favicon_name + " image");
@@ -510,6 +520,13 @@ const gulp_test = () => {
 const gulp_template = gulp.series(create_template);
 
 
+
+/**
+ * @Command: gulp font
+ */
+const gulp_font = gulp.series(copy_fonts);
+
+
 /**
  * @Command: gulp zip
  */
@@ -557,6 +574,7 @@ exports.clean = gulp_clean;
 exports.css = gulp_css;
 exports.default = gulp_default;
 exports.favicon = gulp_favicon;
+exports.font = gulp_font;
 exports.help = gulp_help;
 exports.html = gulp_html;
 exports.images = gulp_images;
