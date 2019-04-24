@@ -16,7 +16,7 @@ const favicon = require ('gulp-real-favicon');
 const filelist = require("gulp-filelist");
 const image = require('gulp-image');
 const minimist = require('minimist');
-const notify =  require('gulp-notify');
+const notify = require('gulp-notify');
 const rename = require('gulp-rename');
 const replace = require('gulp-replace');
 const sass = require('gulp-sass');
@@ -87,7 +87,7 @@ let tags = ['project_author', 'project_title', 'template_name', 'favicon_name', 
 
 
 /**
- * ucwords the first letter of each word
+ * Uppercase the first letter of each word
  *
  * @param string
  * @returns {string}
@@ -98,6 +98,7 @@ const ucwords = (string) => {
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ');
 };
+
 
 /**
  * Sluggify the string
@@ -126,7 +127,7 @@ const timestamp = () => {
 
 
 /**
- * Return list of template file names
+ * Return templates links as list items
  *
  * @returns {string}
  */
@@ -134,7 +135,8 @@ const template_links = () => {
     let string = "";
     let names = require('./src/names.json');
     for (let i = 0; i < names.length; i++) {
-        string += "<li class='nav-item'><a class='nav-link' href='" + names[i] + ".html'>" + ucwords(names[i]) + "</a></li>\n";
+        string += "<li class='nav-item'><a class='nav-link' href='" + names[i] + ".html'>" + ucwords(names[i]) + "</a></li>";
+        if(1 !== names.length) string += "\n";
     }
     return string;
 };
@@ -277,6 +279,10 @@ const copy_html = () => {
 };
 
 
+/**
+ * Replace template tags
+ * @TODO - loop through array instead of listing each tag individually
+ */
 const replace_tags = () => {
     return gulp.src('./' + dist_folder + '/*.html')
         .pipe(replace('{{ project_author }}', project_author))
@@ -289,7 +295,8 @@ const replace_tags = () => {
         .pipe(replace('{{ js_file_name }}', js_file_name))
         .pipe(replace('{{ js_file_suffix }}', js_file_suffix))
         .pipe(gulp.dest('./' + dist_folder));
-}
+};
+
 
 /**
  * Delete files containing list of template names
@@ -397,7 +404,7 @@ const create_template = () => {
 
 
 /**
- * Create folders based on .env file variables
+ * Create folders based on .env variables
  */
 const create_folders = (done) => {
     folders.forEach(dir => {
@@ -424,8 +431,6 @@ const zip_assets = () => {
 
 /**
  * @Command: gulp help
- *
- * List all of the available gulp commands
  */
 const gulp_help = (done) => {
     console.log("\n\nThis is a list of all available tasks: \n");
