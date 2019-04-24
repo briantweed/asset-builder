@@ -141,20 +141,6 @@ const template_links = () => {
 
 
 /**
- * Create json file containing template names
- *
- * @param file
- * @param options
- * @returns {*}
- */
-const create_link_list = (file, options) => {
-    return gulp.src('./' + dev_folder + '/*.html')
-        .pipe(filelist(file + '.json', options))
-        .pipe(gulp.dest('./src'));
-};
-
-
-/**
  * Compile sass files
  */
 const compile_sass = () => {
@@ -257,7 +243,9 @@ const delete_copied_html = () => {
  * Get the names of the html files
  */
 const get_html_names = () => {
-    return create_link_list('names', { flatten: true, removeExtensions: true });
+    return gulp.src('./' + dev_folder + '/*.html')
+        .pipe(filelist('names.json', { flatten: true, removeExtensions: true }))
+        .pipe(gulp.dest('./src'));
 };
 
 
