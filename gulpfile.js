@@ -524,7 +524,7 @@ const gulp_template = gulp.series(create_template);
 /**
  * @Command: gulp font
  */
-const gulp_font = gulp.series(copy_fonts);
+const gulp_fonts = gulp.series(copy_fonts);
 
 
 /**
@@ -537,7 +537,7 @@ const gulp_zip = gulp.series(zip_assets);
  * @Command: gulp build
  */
 const gulp_build = gulp.series(
-    delete_copied_html, delete_compressed_images, gulp_css, gulp_js, gulp_html, gulp_favicon, gulp_images
+    delete_copied_html, delete_compressed_images, gulp_css, gulp_js, gulp_html, gulp_fonts, gulp_favicon, gulp_images
 );
 
 
@@ -574,7 +574,7 @@ exports.clean = gulp_clean;
 exports.css = gulp_css;
 exports.default = gulp_default;
 exports.favicon = gulp_favicon;
-exports.font = gulp_font;
+exports.fonts = gulp_fonts;
 exports.help = gulp_help;
 exports.html = gulp_html;
 exports.images = gulp_images;
