@@ -5,8 +5,8 @@
 - Combine and minimise all js files
 - Generate favicon images
 - Compress all images
+- Create html templates
 - Create zip file of distribution folder
-
 
 ## Setup
 
@@ -22,7 +22,7 @@ In the `.env` file, set you project variables. Below are the default settings:
 PROJECT_AUTHOR = Your Name
 
 PROJECT_TITLE = Asset Builder
-ZIP_FILE_NAME = assets_builder
+ZIP_FILE_NAME = asset_builder
 
 FAVICON_IMAGE_NAME = favicon.jpg
 FAVICON_TILE_COLOR = #123456
@@ -35,6 +35,7 @@ JS_FILE_NAME = app
 JS_FILE_NAME_SUFFIX = min
 
 EXPORT_FOLDER_NAME = exports
+
 
 # Development Folder Structure:
 #
@@ -77,6 +78,9 @@ gulp setup
 ```
 This will generate you folder structure. You can now add the necessary files to you development folders.
 
+## How To Use
+
+@todo - write this
 
 ## Gulp Commands
 
