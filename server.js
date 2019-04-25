@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const { exec } = require('child_process');
+const { exec, watch } = require('child_process');
 
 
 app.use(express.static('public'));
@@ -12,5 +12,6 @@ app.post('/send' , function(req , res){
 });
 
 app.listen(3000, function () {
+    exec('gulp watch');
     console.log('Example app listening on port 3000!');
 });

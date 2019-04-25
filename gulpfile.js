@@ -139,8 +139,7 @@ const template_links = () => {
     let string = "";
     let names = require('./src/names.json');
     for (let i = 0; i < names.length; i++) {
-        string += "<li class='nav-item'><a class='nav-link' href='" + names[i] + ".html'>" + ucwords(names[i]) + "</a></li>";
-        if(1 !== names.length) string += "\n";
+        string += "<li class='nav-item'><a class='nav-link' href='" + names[i] + ".html'>" + ucwords(names[i]) + "</a></li>\n";
     }
     return string;
 };
@@ -320,9 +319,14 @@ const replaceTags = (input) => {
         let re = new RegExp(pattern, "g");
         input = input.replace(re, value);
     });
-
+    let pattern = '{{ links }}';
+    let value = template_links();
+    console.log(value);
+    let re = new RegExp(pattern, "g");
+    input = input.replace(re, value);
     return input;
 };
+
 
 /**
  * Delete files containing list of template names
@@ -520,13 +524,13 @@ const gulp_help = (done) => {
 /**
  * @Command: gulp css
  */
-const gulp_css = gulp.series(compile_sass, minify_css, delete_compiled_sass);
+const gulp_css = gulp.series(compile_sass, minify_css, delete_compiled_sass, reload_browser_sync);
 
 
 /**
  * @Command: gulp js
  */
-const gulp_js = gulp.series(minify_js);
+const gulp_js = gulp.series(minify_js, reload_browser_sync);
 
 
 /**
@@ -538,55 +542,55 @@ const gulp_default = gulp.parallel(gulp_css, gulp_js);
 /**
  * @Command: gulp favicon
  */
-const gulp_favicon = gulp.series(generate_favicon);
+const gulp_favicon = gulp.series(generate_favicon, reload_browser_sync);
 
 
 /**
  * @Command: gulp html
  */
 const gulp_html = gulp.series(
-    delete_copied_html, get_html_names, create_html_link_page, copy_html, replace_tags_in_templates
+    delete_copied_html, get_html_names, create_html_link_page, copy_html, replace_tags_in_templates, reload_browser_sync
 );
 
 
 /**
  * @Command: gulp images
  */
-const gulp_images = gulp.series(delete_compressed_images, minify_images);
+const gulp_images = gulp.series(delete_compressed_images, minify_images, reload_browser_sync);
 
 
 /**
  * @Command: gulp clean
  */
 const gulp_clean = gulp.parallel(
-    delete_compiled_sass, delete_exports, delete_distribution_folders, delete_templates, get_html_names, create_html_link_page, replace_tags
+    delete_compiled_sass, delete_exports, delete_distribution_folders, delete_templates, get_html_names, create_html_link_page, replace_tags_in_templates
 );
 
 
 /**
  * @Command: gulp template --name "FILENAME"
  */
-const gulp_template = gulp.series(create_template);
+const gulp_template = gulp.series(create_template, reload_browser_sync);
 
 
 
 /**
  * @Command: gulp font
  */
-const gulp_fonts = gulp.series(copy_fonts);
+const gulp_fonts = gulp.series(copy_fonts, reload_browser_sync);
 
 
 /**
  * @Command: gulp zip
  */
-const gulp_zip = gulp.series(zip_assets);
+const gulp_zip = gulp.series(zip_assets, reload_browser_sync);
 
 
 /**
  * @Command: gulp build
  */
 const gulp_build = gulp.series(
-    delete_copied_html, delete_compressed_images, gulp_css, gulp_js, gulp_html, gulp_fonts, gulp_favicon, gulp_images
+    delete_copied_html, delete_compressed_images, gulp_css, gulp_js, gulp_html, gulp_fonts, gulp_favicon, gulp_images, reload_browser_sync
 );
 
 
