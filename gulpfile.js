@@ -8,6 +8,8 @@
  */
 const fs = require('fs');
 const gulp = require('gulp');
+const server = require('browser-sync').create();
+
 const cleanCSS = require('gulp-clean-css');
 const concat = require('gulp-concat');
 const del = require('del');
@@ -218,7 +220,7 @@ const delete_compressed_images = () => {
 /**
  * Delete all exported files
  */
-const deleted_exports = () => {
+const delete_exports = () => {
     return del('./' + export_folder + '/*');
 };
 
@@ -238,6 +240,15 @@ const delete_distribution_folders = () => {
  */
 const delete_copied_html = () => {
     return del(['./' + dist_folder + '/*.html', '!./' + dist_folder + '/index.html']);
+};
+
+
+
+/**
+ * Delete any existing templates from the distribution folder
+ */
+const delete_templates = () => {
+    return del('./' + dev_folder + '/*.html');
 };
 
 
@@ -376,8 +387,8 @@ const generate_favicon = (done) => {
             settings: {
                 scalingAlgorithm: 'Mitchell',
                 errorOnImageTooSmall: false
-            },
-            markupFile: './src/favicon-data.json'
+            }
+            //markupFile: './src/favicon-data.json'
         }, function() {
             done();
         });
@@ -434,6 +445,46 @@ const zip_assets = () => {
         .pipe(gulp.dest('./' + export_folder));
 };
 
+
+const watch_folders = () => {
+    gulp.watch([
+        './' + dev_sass_folder + '/*.scss',
+        './' + dev_css_folder + '/*.css',
+        '!./' + dev_css_folder + '/*.compiled.css'
+    ], gulp.series(gulp_css, reload_browser_sync));
+
+    gulp.watch('./' + dev_js_folder + '/*.js',
+        gulp.series(gulp_js, reload_browser_sync)
+    );
+
+    gulp.watch('./' + dev_folder + '/*.html',
+        gulp.series(delete_cached_files, gulp_html, reload_browser_sync)
+    );
+
+    gulp.watch('./' + dev_images_folder + '/*',
+        gulp.series(gulp_images, reload_browser_sync)
+    );
+
+    gulp.watch('./' + dev_favicon_folder + '/' + favicon_name,
+        gulp.series(gulp_favicon, reload_browser_sync)
+    );
+};
+
+
+const start_browser_sync = (done) => {
+    server.init({
+        server: {
+            baseDir: "./" + dist_folder
+        }
+    });
+    done();
+};
+
+
+const reload_browser_sync = (done) => {
+    server.reload();
+    done();
+};
 
 
 
@@ -502,7 +553,7 @@ const gulp_images = gulp.series(delete_compressed_images, minify_images);
  * @Command: gulp clean
  */
 const gulp_clean = gulp.parallel(
-    delete_compiled_sass, deleted_exports, delete_distribution_folders, delete_html_names
+    delete_compiled_sass, delete_exports, delete_distribution_folders, delete_templates, get_html_names, create_html_link_page, replace_tags
 );
 
 
@@ -544,17 +595,7 @@ const gulp_build = gulp.series(
 /**
  * @Command: gulp watch
  */
-const gulp_watch = () => {
-    gulp.watch([
-        './' + dev_sass_folder + '/*.scss',
-        './' + dev_css_folder + '/*.css',
-        '!./' + dev_css_folder + '/*.compiled.css'
-    ], gulp_css);
-    gulp.watch('./' + dev_js_folder + '/*.js', gulp_js);
-    gulp.watch('./' + dev_folder + '/*.html', gulp.series(delete_cached_files, gulp_html));
-    gulp.watch('./' + dev_images_folder + '/*', gulp_images);
-    gulp.watch('./' + dev_favicon_folder + '/' + favicon_name, gulp_favicon);
-};
+const gulp_watch = gulp.series(start_browser_sync, watch_folders);
 
 
 /**
