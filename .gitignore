@@ -7,6 +7,7 @@
 !gulpfile.json
 !package.json
 !package-lock.json
+!server.js
 !README.md
 !templates/*
 !src/**/*
