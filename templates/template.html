@@ -18,37 +18,23 @@
 
     <body>
 
-
         <!-- Navigation -->
-        <nav class="navbar navbar-dark bg-dark">
-            <a class="navbar-brand" href="/">{{ project_title }}</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav mr-auto"></ul>
-                <ul class="navbar-nav">
-                    {{ links }}
-                </ul>
-            </div>
-        </nav>
-
+        <ul id="template-links" class="nav justify-content-end bg-dark">
+            <li><a href="/">{{ project_title }}</a></li>
+            {{ links }}
+        </ul>
 
         <!-- Page Title -->
         <header>
             <div class="row">
                 <div class="col-12">
-                    <h1 class="text-center mx-4">{{ page_name }}</h1>
+                    <h1 class="text-center my-4">{{ page_name }}</h1>
                 </div>
             </div>
         </header>
 
-
-        <main>
-
-
-        </main>
-
+        <!-- Main Content -->
+        <main></main>
 
         <script src="js/{{ js_file_name }}.{{ js_file_suffix }}.js"></script>
 
