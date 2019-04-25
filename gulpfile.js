@@ -303,16 +303,14 @@ const replace_tags_in_templates = () => {
 
 
 const replaceTags = (input) => {
-    let new_string =  input;
-
-    tags.forEach(function(tag, new_string){
-        //
-        // let pattern = '{{ project_title }}';
-        // let re = new RegExp(pattern, "g");
-        // let value = eval(tag);
-        // this.replace(re, value)
+    tags.forEach(function(tag){
+        let pattern = '{{ ' + tag + ' }}';
+        let value = eval(tag);
+        let re = new RegExp(pattern, "g");
+        input = input.replace(re, value);
     });
-    return new_string;
+
+    return input;
 };
 
 /**
