@@ -20,6 +20,7 @@ const notify = require('gulp-notify');
 const rename = require('gulp-rename');
 const replace = require('gulp-replace');
 const sass = require('gulp-sass');
+const tap = require('gulp-tap');
 const uglify = require('gulp-uglify');
 const zip = require('gulp-zip');
 
@@ -70,7 +71,8 @@ let css_file_suffix = env.CSS_FILE_NAME_SUFFIX;
 let js_file_name = env.JS_FILE_NAME;
 let js_file_suffix = env.JS_FILE_NAME_SUFFIX;
 
-let tags = ['project_author', 'project_title', 'template_name', 'favicon_name', 'favicon_tile_color', 'favicon_theme_color',
+let tags = [
+    'project_author', 'project_title', 'template_name', 'favicon_name', 'favicon_tile_color', 'favicon_theme_color',
     'zip_file_name', 'css_file_name', 'css_file_suffix', 'js_file_name', 'js_file_suffix',
 ];
 
@@ -290,22 +292,28 @@ const copy_html = () => {
 
 /**
  * Replace template tags
- * @TODO - loop through array instead of listing each tag individually
  */
-const replace_tags = () => {
+const replace_tags_in_templates = () => {
     return gulp.src('./' + dist_folder + '/*.html')
-        .pipe(replace('{{ project_author }}', project_author))
-        .pipe(replace('{{ links }}', template_links()))
-        .pipe(replace('{{ project_title }}', project_title))
-        .pipe(replace('{{ theme_color }}', favicon_theme_color))
-        .pipe(replace('{{ tile_color }}', favicon_tile_color))
-        .pipe(replace('{{ css_file_name }}', css_file_name))
-        .pipe(replace('{{ css_file_suffix }}', css_file_suffix))
-        .pipe(replace('{{ js_file_name }}', js_file_name))
-        .pipe(replace('{{ js_file_suffix }}', js_file_suffix))
+        .pipe(tap(function(file) {
+            file.contents = Buffer.from(replaceTags(file.contents.toString()))
+        }))
         .pipe(gulp.dest('./' + dist_folder));
 };
 
+
+const replaceTags = (input) => {
+    let new_string =  input;
+
+    tags.forEach(function(tag, new_string){
+        //
+        // let pattern = '{{ project_title }}';
+        // let re = new RegExp(pattern, "g");
+        // let value = eval(tag);
+        // this.replace(re, value)
+    });
+    return new_string;
+};
 
 /**
  * Delete files containing list of template names
@@ -488,7 +496,7 @@ const gulp_favicon = gulp.series(generate_favicon);
  * @Command: gulp html
  */
 const gulp_html = gulp.series(
-    delete_copied_html, get_html_names, create_html_link_page, copy_html, replace_tags
+    delete_copied_html, get_html_names, create_html_link_page, copy_html, replace_tags_in_templates
 );
 
 
@@ -504,14 +512,6 @@ const gulp_images = gulp.series(delete_compressed_images, minify_images);
 const gulp_clean = gulp.parallel(
     delete_compiled_sass, deleted_exports, delete_distribution_folders, delete_html_names
 );
-
-
-/**
- * @Command: gulp test
- */
-const gulp_test = () => {
-    return gulp.src('./').pipe(notify({ message: "Gulp is working", onLast: true }));
-};
 
 
 /**
@@ -561,6 +561,14 @@ const gulp_watch = () => {
  * @Command: gulp setup
  */
 const gulp_setup = gulp.series(create_folders, gulp_html);
+
+
+/**
+ * @Command: gulp test
+ */
+const gulp_test = () => {
+    return gulp.src('./').pipe(notify({ message: "Gulp is working", onLast: true }));
+};
 
 
 
