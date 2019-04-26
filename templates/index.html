@@ -67,7 +67,11 @@
                     <small>By {{ project_author }}</small>
                 </header>
 
-                <section id="app"></section>
+                <section id="app">
+
+                    <button onclick=send()>Execute gulp minify</button>
+
+                </section>
 
                 <section id="links">
                     <ul>
@@ -79,6 +83,25 @@
 
         </main>
 
+        <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+
+        <script>
+
+            function send(){
+                $.ajax({
+                    url : 'http://localhost:3000/send',
+                    method : 'POST',
+                    success : function(res){
+                        console.log(res);
+                    },
+                    error : function(response){
+                        console.log('Error!');
+                        console.log(response);
+                    }
+                });
+            }
+
+        </script>
 
     </body>
 

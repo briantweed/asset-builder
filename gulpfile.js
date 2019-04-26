@@ -137,9 +137,13 @@ const timestamp = () => {
  */
 const template_links = () => {
     let string = "";
-    let names = require('./src/names.json');
-    for (let i = 0; i < names.length; i++) {
-        string += "<li class='nav-item'><a class='nav-link' href='" + names[i] + ".html'>" + ucwords(names[i]) + "</a></li>\n";
+    let names = require('./names.json');
+    if(names.length > 0) {
+        for (let i = 0; i < names.length; i++) {
+            string += "<li class='nav-item'><a class='nav-link' href='" + names[i] + ".html'>" + ucwords(names[i]) + "</a></li>\n";
+        }
+    } else {
+        string = "There are currently no templates";
     }
     return string;
 };
@@ -259,7 +263,7 @@ const delete_templates = () => {
 const get_html_names = () => {
     return gulp.src('./' + dev_folder + '/*.html')
         .pipe(filelist('names.json', { flatten: true, removeExtensions: true }))
-        .pipe(gulp.dest('./src'));
+        .pipe(gulp.dest('./'));
 };
 
 
@@ -267,7 +271,7 @@ const get_html_names = () => {
  * Delete cached json files
  */
 const delete_cached_files = (done) => {
-    delete require.cache[require.resolve('./src/names.json')];
+    delete require.cache[require.resolve('./names.json')];
     done();
 };
 
@@ -321,18 +325,9 @@ const replaceTags = (input) => {
     });
     let pattern = '{{ links }}';
     let value = template_links();
-    console.log(value);
     let re = new RegExp(pattern, "g");
     input = input.replace(re, value);
     return input;
-};
-
-
-/**
- * Delete files containing list of template names
- */
-const delete_html_names = () => {
-    return del('./src/names.json');
 };
 
 
@@ -398,7 +393,7 @@ const generate_favicon = (done) => {
                 scalingAlgorithm: 'Mitchell',
                 errorOnImageTooSmall: false
             }
-            //markupFile: './src/favicon-data.json'
+            //markupFile: './favicon-data.json'
         }, function() {
             done();
         });

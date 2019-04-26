@@ -8,6 +8,7 @@
 !package.json
 !package-lock.json
 !server.js
+!names.js
 !README.md
 !templates/*
 !src/**/*
