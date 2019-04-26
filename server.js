@@ -13,7 +13,7 @@ app.post('/send' , function(req , res){
 });
 
 app.post('/create' , function(req , res){
-    console.log(req.body.command);
+    exec('gulp build');
     exec('gulp template --name ' + req.body.command);
     res.send('success!');
 

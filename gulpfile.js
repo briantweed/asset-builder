@@ -327,6 +327,7 @@ const replaceTags = (input) => {
     });
     let pattern = '{{ links }}';
     let value = template_links();
+    console.log(value);
     let re = new RegExp(pattern, "g");
     input = input.replace(re, value);
     return input;
