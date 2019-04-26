@@ -137,10 +137,15 @@ const timestamp = () => {
  */
 const template_links = () => {
     let string = "";
-    let names = require('./src/names.json');
-    for (let i = 0; i < names.length; i++) {
-        string += "<li class='nav-item'><a class='nav-link' href='" + names[i] + ".html'>" + ucwords(names[i]) + "</a></li>";
-        if(1 !== names.length) string += "\n";
+    let names = require('./names.json');
+    if(names.length > 0) {
+        for (let i = 0; i < names.length; i++) {
+            string += "<li class='nav-item'><a class='nav-link' href='" + names[i] + ".html'>" + ucwords(names[i]) + "</a></li>";
+            if(1 !== names.length) string += "\n";
+        }
+    }
+    else {
+        string = 'There are currenly no templates';
     }
     return string;
 };
@@ -260,7 +265,7 @@ const delete_templates = () => {
 const get_html_names = () => {
     return gulp.src('./' + dev_folder + '/*.html')
         .pipe(filelist('names.json', { flatten: true, removeExtensions: true }))
-        .pipe(gulp.dest('./src'));
+        .pipe(gulp.dest('./'));
 };
 
 
@@ -268,7 +273,7 @@ const get_html_names = () => {
  * Delete cached json files
  */
 const delete_cached_files = (done) => {
-    delete require.cache[require.resolve('./src/names.json')];
+    delete require.cache[require.resolve('./names.json')];
     done();
 };
 
@@ -320,7 +325,10 @@ const replaceTags = (input) => {
         let re = new RegExp(pattern, "g");
         input = input.replace(re, value);
     });
-
+    let pattern = '{{ links }}';
+    let value = template_links();
+    let re = new RegExp(pattern, "g");
+    input = input.replace(re, value);
     return input;
 };
 
@@ -328,7 +336,7 @@ const replaceTags = (input) => {
  * Delete files containing list of template names
  */
 const delete_html_names = () => {
-    return del('./src/names.json');
+    return del('.names.json');
 };
 
 
@@ -393,8 +401,9 @@ const generate_favicon = (done) => {
             settings: {
                 scalingAlgorithm: 'Mitchell',
                 errorOnImageTooSmall: false
-            }
-            //markupFile: './src/favicon-data.json'
+            },
+            markupFile: './favicon-data.json'
+
         }, function() {
             done();
         });
@@ -463,9 +472,10 @@ const watch_folders = () => {
         gulp.series(gulp_js, reload_browser_sync)
     );
 
-    gulp.watch('./' + dev_folder + '/*.html',
-        gulp.series(delete_cached_files, gulp_html, reload_browser_sync)
-    );
+    gulp.watch([
+        './' + dev_folder + '/*.html',
+        './templates/*.html'
+    ], gulp.series(delete_cached_files, gulp_html, reload_browser_sync));
 
     gulp.watch('./' + dev_images_folder + '/*',
         gulp.series(gulp_images, reload_browser_sync)
@@ -559,7 +569,7 @@ const gulp_images = gulp.series(delete_compressed_images, minify_images);
  * @Command: gulp clean
  */
 const gulp_clean = gulp.parallel(
-    delete_compiled_sass, delete_exports, delete_distribution_folders, delete_templates, get_html_names, create_html_link_page, replace_tags
+    delete_compiled_sass, delete_exports, delete_distribution_folders, delete_templates, get_html_names, create_html_link_page, replace_tags_in_templates
 );
 
 
@@ -567,7 +577,6 @@ const gulp_clean = gulp.parallel(
  * @Command: gulp template --name "FILENAME"
  */
 const gulp_template = gulp.series(create_template);
-
 
 
 /**
