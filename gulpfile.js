@@ -105,7 +105,7 @@ const ucwords = (string) => {
 
 
 /**
- * Sluggify the string
+ * Convert the string to kebab case
  *
  * @param string
  * @returns {string}
@@ -145,7 +145,7 @@ const template_links = () => {
         }
     }
     else {
-        string = 'There are currenly no templates';
+        string = 'There are currently no templates';
     }
     return string;
 };

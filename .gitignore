@@ -10,5 +10,3 @@
 !server.js
 !README.md
 !templates/*
-!src/**/*
-src/*.json
