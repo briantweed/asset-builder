@@ -8,9 +8,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 app.post('/send' , function(req , res){
-    console.log(req.body.command);
     exec('gulp ' + req.body.command);
-    console.log('running gulp build');
+    res.send('success!');
+});
+
+app.post('/create' , function(req , res){
+    console.log(req.body.command);
+    exec('gulp template --name ' + req.body.command);
     res.send('success!');
 
 });
