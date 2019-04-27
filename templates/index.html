@@ -9,6 +9,7 @@
         <title>{{ project_title }}</title>
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <style>
             body,html {
                 font-family: Arial, sans-serif;
@@ -49,10 +50,11 @@
             section#links > ul > li > a:hover {
                 text-decoration: none;
                 border: 2px solid #777;
-                background-color: #0ff;
+                background-color: #eef;
                 color: #333;
                 transition: all 0.3s;
             }
+
         </style>
     </head>
 
@@ -63,15 +65,19 @@
             <div class="container">
 
                 <header>
-                    <h1>{{ project_title }}</h1>
-                    <small>By {{ project_author }}</small>
+                    <div class="row">
+                        <div class="col-12 my-3">
+                            <h1>{{ project_title }}</h1>
+                            <small>By {{ project_author }}</small>
+                        </div>
+                    </div>
                 </header>
 
+
                 <section id="app">
-
-                    <button onclick=send()>Execute gulp minify</button>
-
+                    <input name="template" type="text"><buttton class="btn btn-info mx-3" onclick=create(document.getElementsByName('template')[0].value)>create</buttton>
                 </section>
+
 
                 <section id="links">
                     <ul>
@@ -84,13 +90,14 @@
         </main>
 
         <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-
         <script>
-
-            function send(){
+            function send(command){
                 $.ajax({
                     url : 'http://localhost:3000/send',
                     method : 'POST',
+                    data: {
+                        'command': command
+                    },
                     success : function(res){
                         console.log(res);
                     },
@@ -101,8 +108,23 @@
                 });
             }
 
+            function create(command){
+                $.ajax({
+                    url : 'http://localhost:3000/create',
+                    method : 'POST',
+                    data: {
+                        'command': command
+                    },
+                    success : function(res){
+                        console.log(res);
+                    },
+                    error : function(response){
+                        console.log('Error!');
+                        console.log(response);
+                    }
+                });
+            }
         </script>
-
     </body>
 
 </html>
