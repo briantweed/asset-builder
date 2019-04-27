@@ -2,12 +2,11 @@
 !*/
 .idea
 /node_modules
+!templates/*
 !.env
 !.gitignore
-!gulpfile.json
+!gulpfile.js
 !package.json
 !package-lock.json
 !server.js
-!names.js
 !README.md
-!templates/*

@@ -235,8 +235,8 @@ const delete_exports = () => {
 /**
  * Delete distribution folders
  */
-const delete_distribution_folders = () => {
-    return del(['./' + dist_folder + '/**/*.*', '!./' + dist_folder + '/index.html']);
+const delete_distribution_files = () => {
+    return del('./' + dist_folder + '/**/*.*');
 
 
 };
@@ -281,10 +281,9 @@ const delete_cached_files = (done) => {
 /**
  * Create landing page with links to template files
  */
-const create_html_link_page = (done) => {
-    gulp.src('./templates/index.html')
+const create_html_link_page = () => {
+    return gulp.src('./templates/index.html')
         .pipe(gulp.dest(dist_folder));
-    done();
 };
 
 
@@ -312,6 +311,7 @@ const copy_html = () => {
 const replace_tags_in_templates = () => {
     return gulp.src('./' + dist_folder + '/*.html')
         .pipe(tap(function(file) {
+            console.log(file.path.name);
             file.contents = Buffer.from(replaceTags(file.contents.toString()))
         }))
         .pipe(gulp.dest('./' + dist_folder));
@@ -450,7 +450,10 @@ const create_folders = (done) => {
 const zip_assets = () => {
     return gulp.src(dist_folder + '/*')
         .pipe(zip(zip_file_name + '_' + timestamp() + '.zip'))
-        .pipe(gulp.dest('./' + export_folder));
+        .pipe(gulp.dest('./' + export_folder))
+        .pipe(notify({
+            message: "Zip file create: " + export_folder + "/" + zip_file_name + "_" + timestamp() + ".zip"
+        }));
 };
 
 
@@ -468,7 +471,7 @@ const watch_folders = () => {
     gulp.watch([
         './' + dev_folder + '/*.html',
         './templates/*.html'
-    ], gulp.series(delete_cached_files, gulp_html, reload_browser_sync));
+    ], gulp.series(delete_cached_files, reload_browser_sync));
 
     gulp.watch('./' + dev_images_folder + '/*',
         gulp.series(gulp_images, reload_browser_sync)
@@ -491,6 +494,7 @@ const start_browser_sync = (done) => {
 
 
 const reload_browser_sync = (done) => {
+    gulp.series(gulp_html);
     server.reload();
     done();
 };
@@ -523,7 +527,11 @@ const gulp_help = (done) => {
 /**
  * @Command: gulp css
  */
-const gulp_css = gulp.series(compile_sass, minify_css, delete_compiled_sass);
+const gulp_css = gulp.series(
+    compile_sass,
+    minify_css,
+    delete_compiled_sass
+);
 
 
 /**
@@ -535,7 +543,10 @@ const gulp_js = gulp.series(minify_js);
 /**
  * @Command: gulp
  */
-const gulp_default = gulp.parallel(gulp_css, gulp_js);
+const gulp_default = gulp.parallel(
+    gulp_css,
+    gulp_js
+);
 
 
 /**
@@ -548,21 +559,38 @@ const gulp_favicon = gulp.series(generate_favicon);
  * @Command: gulp html
  */
 const gulp_html = gulp.series(
-    delete_copied_html, get_html_names, create_html_link_page, copy_html, replace_tags_in_templates
+    delete_copied_html,
+    get_html_names,
+    gulp.parallel(
+        create_html_link_page,
+        copy_html
+    ),
+    replace_tags_in_templates
 );
 
 
 /**
  * @Command: gulp images
  */
-const gulp_images = gulp.series(delete_compressed_images, minify_images);
+const gulp_images = gulp.series(
+    delete_compressed_images,
+    minify_images
+);
 
 
 /**
  * @Command: gulp clean
  */
-const gulp_clean = gulp.parallel(
-    delete_compiled_sass, delete_exports, delete_distribution_folders, delete_templates, get_html_names, create_html_link_page, replace_tags_in_templates
+const gulp_clean = gulp.series(
+    gulp.parallel(
+        delete_compiled_sass,
+        delete_exports,
+        delete_distribution_files,
+        delete_templates
+    ),
+    get_html_names,
+    create_html_link_page,
+    replace_tags_in_templates
 );
 
 
@@ -588,27 +616,43 @@ const gulp_zip = gulp.series(zip_assets);
  * @Command: gulp build
  */
 const gulp_build = gulp.series(
-    delete_copied_html, delete_compressed_images, gulp_css, gulp_js, gulp_html, gulp_fonts, gulp_favicon, gulp_images
+    delete_distribution_files,
+    gulp_css,
+    gulp_js,
+    gulp_fonts,
+    gulp_favicon,
+    gulp_images,
+    gulp_html
 );
 
 
 /**
  * @Command: gulp watch
  */
-const gulp_watch = gulp.series(start_browser_sync, watch_folders);
+const gulp_watch = gulp.series(
+    start_browser_sync,
+    watch_folders
+);
 
 
 /**
  * @Command: gulp setup
  */
-const gulp_setup = gulp.series(create_folders, gulp_html);
+const gulp_setup = gulp.series(
+    create_folders,
+    gulp_html
+);
 
 
 /**
  * @Command: gulp test
  */
 const gulp_test = () => {
-    return gulp.src('./').pipe(notify({ message: "Gulp is working", onLast: true }));
+    return gulp.src('./')
+        .pipe(notify({
+            message: "Gulp is working", onLast: true
+        })
+    );
 };
 
 
