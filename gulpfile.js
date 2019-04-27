@@ -311,7 +311,6 @@ const copy_html = () => {
 const replace_tags_in_templates = () => {
     return gulp.src('./' + dist_folder + '/*.html')
         .pipe(tap(function(file) {
-            console.log(file.path.name);
             file.contents = Buffer.from(replaceTags(file.contents.toString()))
         }))
         .pipe(gulp.dest('./' + dist_folder));
@@ -462,23 +461,23 @@ const watch_folders = () => {
         './' + dev_sass_folder + '/*.scss',
         './' + dev_css_folder + '/*.css',
         '!./' + dev_css_folder + '/*.compiled.css'
-    ], gulp.series(gulp_css, reload_browser_sync));
+    ], gulp.series(gulp_css, gulp_html, reload_browser_sync));
 
     gulp.watch('./' + dev_js_folder + '/*.js',
-        gulp.series(gulp_js, reload_browser_sync)
+        gulp.series(gulp_js, gulp_html, reload_browser_sync)
     );
 
     gulp.watch([
         './' + dev_folder + '/*.html',
         './templates/*.html'
-    ], gulp.series(delete_cached_files, reload_browser_sync));
+    ], gulp.series(delete_cached_files, gulp_html, reload_browser_sync));
 
     gulp.watch('./' + dev_images_folder + '/*',
-        gulp.series(gulp_images, reload_browser_sync)
+        gulp.series(gulp_images, gulp_html, reload_browser_sync)
     );
 
     gulp.watch('./' + dev_favicon_folder + '/' + favicon_name,
-        gulp.series(gulp_favicon, reload_browser_sync)
+        gulp.series(gulp_favicon, gulp_html, reload_browser_sync)
     );
 };
 
@@ -494,7 +493,6 @@ const start_browser_sync = (done) => {
 
 
 const reload_browser_sync = (done) => {
-    gulp.series(gulp_html);
     server.reload();
     done();
 };
