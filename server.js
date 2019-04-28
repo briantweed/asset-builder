@@ -1,13 +1,13 @@
 const fs = require('fs');
+const parse = require('body-parser');
 const express = require('express');
-const app = express();
 const { exec } = require('child_process');
-const bodyParser = require('body-parser');
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+const app = express();
+
+app.use(parse.json());
+app.use(parse.urlencoded({ extended: true }));
 app.use(express.static('public'));
-
 app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3001');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
@@ -16,29 +16,31 @@ app.use(function (req, res, next) {
     next();
 });
 
-app.post('/send' , function(req , res){
-    if(req.body.command.length) exec('gulp ' + req.body.command);
-    console.log(req.body.command);
-});
-
-app.post('/create' , function(req , res){
-    exec('gulp template --name ' + req.body.command, function() {
-        res.json('{"success" : "Updated Successfully", "status" : 200}');
-    });
-});
 
 app.listen(3000, function () {
-    exec('gulp setup', function() {
-        console.log('gulp setup');
-    });
     if (!fs.existsSync('./names.json')) {
         fs.writeFile('./names.json', '[]', function (err) {
             if (err) throw err;
             console.log('names.json created');
         });
     }
-    exec('gulp watch', function() {
-        console.log('browsersync running on port 3001');
-    });
+    exec('gulp setup');
+    exec('gulp watch');
     console.log('server running on port 3000');
+});
+
+
+app.post('/send', function(req, res){
+    exec('gulp ' + req.body.command, function() {
+        res.json('{"success" : "Gulp ' + req.body.command + ' ran", "status" : 200}');
+    });
+});
+
+
+app.post('/create', function(req, res){
+    if(req.body.command.length) {
+        exec('gulp template --name ' + req.body.command, function() {
+            res.json('{"success" : "File Created", "status" : 200}');
+        });
+    }
 });

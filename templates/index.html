@@ -10,38 +10,7 @@
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-        <style>
-
-            #links ul {
-                list-style-type: none;
-                margin: 0;
-                padding: 0;
-            }
-
-            #links ul > li > a {
-                display: block;
-                border: 2px solid #999;
-                border-radius: 5px;
-                margin: 1rem 0;
-                padding: 0.5rem 2rem;
-                text-decoration: none;
-                text-align: center;
-                font-size: 1.25rem;
-                font-weight: 500;
-                color: #666;
-                transition: all 0.3s;
-            }
-
-            #links ul > li > a:focus ,
-            #links ul > li > a:hover {
-                text-decoration: none;
-                border: 2px solid #777;
-                background-color: #eef;
-                color: #333;
-                transition: all 0.3s;
-            }
-
-        </style>
+        <style>h2{font-size:1rem}.list-group-item{margin:1rem 0}.input-group>.input-group-append>.btn{border-radius:3px}</style>
     </head>
 
     <body>
@@ -50,31 +19,39 @@
 
             <header>
                 <div class="row">
-                    <div class="col-12 my-3">
+                     <div class="col-12 mt-3 mb-4">
                         <h1>{{ project_title }}</h1>
                     </div>
                 </div>
             </header>
 
-
             <main>
-                <section id="app">
-                    <button onclick="send('build')">build</button>
-                </section>
-
-
-                <section>
-                    <div class="row">
-                        <div id="links" class="col-6 justify-content-center">
-                            <ul>
-                                {{ links }}
-                            </ul>
+                <div class="row">
+                    <div class="col-2 mt-2">
+                        <h2 class="mb-4">Gulp Processes</h2>
+                        <button class="btn btn-sm btn-block btn-light mb-3" onclick="send('build')">build all</button>
+                        <button class="btn btn-sm btn-block btn-light mb-3" onclick="send('css')">compile css</button>
+                        <button class="btn btn-sm btn-block btn-light mb-3" onclick="send('js')">compile js</button>
+                        <button class="btn btn-sm btn-block btn-light mb-3" onclick="send('images')">compress images</button>
+                        <button class="btn btn-sm btn-block btn-light mb-3" onclick="send('favicon')">create favicon</button>
+                        <button class="btn btn-sm btn-danger btn-block mb-3" onclick="send('clean')">delete templates</button>
+                    </div>
+                    <div class="col-7 offset-1">
+                        <form class="py-3">
+                            <div class="input-group mb-2">
+                                <input type="text" class="form-control form-control-sm" id="template" name="template" placeholder="create new template">
+                                <div class="input-group-append">
+                                    <buttton class="btn btn-sm btn-info ml-2" onclick=create(document.getElementsByName('template')[0].value)>create</buttton>
+                                </div>
+                            </div>
+                        </form>
+                        <h2 class="mt-4">Current Pages</h2>
+                        <div class="list-group">
+                            {{ links }}
                         </div>
                     </div>
-                </section>
-
+                </div>
             </main>
-
         </div>
 
         <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
@@ -86,12 +63,11 @@
                     data: {
                         'command': command
                     },
-                    success : function(res){
-                        console.log(res);
+                    success : function(result){
+                        console.log(result)
                     },
-                    error : function(response){
-                        console.log('Error!');
-                        console.log(response);
+                    error : function(result){
+                        console.log(result)
                     }
                 });
             }
@@ -104,14 +80,15 @@
                         'command': command
                     },
                     success: function (result) {
-                        toastr["success"]("My name is Inigo Montoya. You killed my father. Prepare to die!")
+                        console.log(result)
                     },
                     error : function(result){
-                        toastr["error"]('Nope')
+                        console.log(result)
                     }
                 });
             }
         </script>
+
     </body>
 
 </html>

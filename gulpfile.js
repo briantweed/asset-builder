@@ -140,7 +140,7 @@ const template_links = () => {
     let names = require('./names.json');
     if(names.length > 0) {
         for (let i = 0; i < names.length; i++) {
-            string += "<li class='nav-item'><a class='nav-link' href='" + names[i] + ".html'>" + ucwords(names[i]) + "</a></li>";
+            string += "<a class='list-group-item list-group-item-action' href='" + names[i] + ".html'>" + ucwords(names[i]) + "</a>";
             if(1 !== names.length) string += "\n";
         }
     }
@@ -583,7 +583,7 @@ const gulp_clean = gulp.series(
     gulp.parallel(
         delete_compiled_sass,
         delete_exports,
-        delete_distribution_files,
+        delete_copied_html,
         delete_templates
     ),
     get_html_names,
