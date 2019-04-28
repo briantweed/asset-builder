@@ -486,7 +486,8 @@ const start_browser_sync = (done) => {
     server.init({
         server: {
             baseDir: "./" + dist_folder
-        }
+        },
+        notify: false
     });
     done();
 };
