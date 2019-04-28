@@ -16,20 +16,15 @@
 
     <body>
 
-        <div class="container">
+        <div id="app"></div>
 
-            <header>
-                <div class="row">
-                     <div class="col-12 mt-3 mb-4">
-                        <h1>{{ project_title }}</h1>
-                    </div>
-                </div>
-            </header>
+
+        <div class="container">
 
             <main>
                 <div class="row">
                     <div class="col-2 mt-2">
-                        <h2 class="mb-4">Gulp Processes</h2>
+                        <div id="command-heading"></div>
                         <button class="btn btn-sm btn-block btn-light mb-3 text-left" onclick="send('build')"><i class="fa-fw fas fa-industry mx-2"></i>build all</button>
                         <button class="btn btn-sm btn-block btn-light mb-3 text-left" onclick="send('css')"><i class="fas fa-fw fa-palette mx-2"></i>compile css</button>
                         <button class="btn btn-sm btn-block btn-light mb-3 text-left" onclick="send('js')"><i class="fas fa-fw fa-code mx-2"></i>compile js</button>
@@ -40,7 +35,7 @@
                     <div class="col-7 offset-1">
 
                         <form action="" class="pb-3">
-                            <h2 class="mt-4">Create New Templates</h2>
+                            <div id="template-heading"></div>
                             <div class="input-group mb-2">
                                 <input type="text" class="form-control form-control-sm" id="template" name="template" placeholder="enter template name without .html">
                                 <div class="input-group-append">
@@ -49,7 +44,7 @@
                             </div>
                         </form>
 
-                        <h2 class="mt-4">Current Templates</h2>
+                        <div id="current-heading"></div>
                         <div class="list-group">
                             {{ links }}
                         </div>
@@ -59,6 +54,66 @@
             </main>
         </div>
 
+        <!-- React -->
+        <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+        <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+        <script src="https://unpkg.com/babel-standalone@6.26.0/babel.js"></script>
+
+        <script type="text/babel">
+
+            class Container extends React.Component {
+                render() {
+                    return (
+                        <div className="container">
+                            <Header/>
+                        </div>
+                    );
+                }
+            }
+
+            class Header extends React.Component {
+                render() {
+                    return (
+                        <div className="row">
+                            <div className="col-12 mt-3 mb-4">
+                                <Heading size="1" text="{{ project_title }}" />
+                            </div>
+                        </div>
+                    );
+                }
+            }
+
+            class Heading extends React.Component {
+                render() {
+                    const HeadingTag = `h${(this.props.size ? this.props.size : 2)}`;
+                    return (
+                        <HeadingTag className={this.props.style}>{this.props.text}</HeadingTag>
+                    );
+                }
+            }
+
+            class Button extends React.Component {
+                render() {
+                    return (
+                        <button className="btn btn-sm btn-danger btn-block mb-3 text-left" onClick="send('clean')"><i className="fa fa-fw fa-minus-circle mx-2"></i>delete templates</button>
+
+                    );
+                }
+            }
+
+            ReactDOM.render(<Heading text="Gulp Processes" style="mb-4"/>, document.getElementById('command-heading'));
+            ReactDOM.render(<Heading text="Create New Template" style="mb-4"/>, document.getElementById('template-heading'));
+            ReactDOM.render(<Heading text="Current Templates" style="mt-4"/>, document.getElementById('current-heading'));
+
+            ReactDOM.render(<Container/>, document.getElementById('app'));
+
+        </script>
+
+
+
+
+
+        <!-- JQuery -->
         <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
         <script>
             function send(command){
