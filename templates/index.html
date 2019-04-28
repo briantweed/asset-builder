@@ -11,28 +11,14 @@
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <style>
-            body,html {
-                font-family: Arial, sans-serif;
-            }
 
-            .container {
-                margin: auto;
-                padding:0;
-                width: 50vw;
-            }
-
-            header {
-                text-align: center;
-                margin-bottom: 2rem;
-            }
-
-            section#links > ul {
+            #links ul {
                 list-style-type: none;
                 margin: 0;
                 padding: 0;
             }
 
-            section#links > ul > li > a {
+            #links ul > li > a {
                 display: block;
                 border: 2px solid #999;
                 border-radius: 5px;
@@ -46,8 +32,8 @@
                 transition: all 0.3s;
             }
 
-            section#links ul > li > a:focus ,
-            section#links > ul > li > a:hover {
+            #links ul > li > a:focus ,
+            #links ul > li > a:hover {
                 text-decoration: none;
                 border: 2px solid #777;
                 background-color: #eef;
@@ -60,35 +46,36 @@
 
     <body>
 
-        <main>
+        <div class="container">
 
-            <div class="container">
-
-                <header>
-                    <div class="row">
-                        <div class="col-12 my-3">
-                            <h1>{{ project_title }}</h1>
-                            <small>By {{ project_author }}</small>
-                        </div>
+            <header>
+                <div class="row">
+                    <div class="col-12 my-3">
+                        <h1>{{ project_title }}</h1>
                     </div>
-                </header>
+                </div>
+            </header>
 
 
+            <main>
                 <section id="app">
                     <button onclick="send('build')">build</button>
-                    <input name="template" type="text"><buttton class="btn btn-info mx-3" onclick=create(document.getElementsByName('template')[0].value)>create</buttton>
                 </section>
 
 
-                <section id="links">
-                    <ul>
-                        {{ links }}
-                    </ul>
+                <section>
+                    <div class="row">
+                        <div id="links" class="col-6 justify-content-center">
+                            <ul>
+                                {{ links }}
+                            </ul>
+                        </div>
+                    </div>
                 </section>
 
-            </div>
+            </main>
 
-        </main>
+        </div>
 
         <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
         <script>
@@ -116,12 +103,11 @@
                     data: {
                         'command': command
                     },
-                    success : function(res){
-                        console.log(res);
+                    success: function (result) {
+                        toastr["success"]("My name is Inigo Montoya. You killed my father. Prepare to die!")
                     },
-                    error : function(response){
-                        console.log('Error!');
-                        console.log(response);
+                    error : function(result){
+                        toastr["error"]('Nope')
                     }
                 });
             }

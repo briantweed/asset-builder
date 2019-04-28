@@ -74,14 +74,13 @@ DISTRIBUTION_JS_FOLDER_NAME = js
 ```
 
 
-Once completed run: `gulp setup`. This will generate you folder structure. 
+#### Automatic build process
+`npm start` - will run the gulp setup, create a local server, watch for any changes to your development folder and update the browser.
+This will also create a user interface for running individual gulp commands, as well as links to each html page.
 
-You can next run `gulp watch` which will listen for any changes to your development folders. 
-Alternatively you can run each gulp command individually when needed.
+#### Manually
+`gulp setup`. You can compile file changes automatically by running `gulp watch` or manually using one of the following commands:
 
-## Gulp Commands
-
-The main gulp commands are:
 - `gulp` - compile css, js and html files
 - `gulp build` - will run all available processes (css, js, html, favicon, image compression)
 - `gulp help` - will list all available commands
@@ -95,16 +94,4 @@ The main gulp commands are:
 - `gulp images` - compress all images and save to distribution folder
 - `gulp zip` - zip distribution folder and save to export folder
 - `gulp clean` - delete all compiled files
-
-## React
-
-Currently includes a very basic React app. This can be started by running `npm start`. Its best to do this after `gulp watch` on a new project or after an inital `gulp build` has been performed.
-
-### Recap
-
-- `npm install`
-- `.env` file settings
-- `gulp setup`
-- `gulp watch`
-- `npm start`
 
