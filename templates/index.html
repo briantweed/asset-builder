@@ -24,13 +24,7 @@
             <main>
                 <div class="row">
                     <div class="col-2 mt-2">
-                        <div id="command-heading"></div>
-                        <button class="btn btn-sm btn-block btn-light mb-3 text-left" onclick="send('build')"><i class="fa-fw fas fa-industry mx-2"></i>build all</button>
-                        <button class="btn btn-sm btn-block btn-light mb-3 text-left" onclick="send('css')"><i class="fas fa-fw fa-palette mx-2"></i>compile css</button>
-                        <button class="btn btn-sm btn-block btn-light mb-3 text-left" onclick="send('js')"><i class="fas fa-fw fa-code mx-2"></i>compile js</button>
-                        <button class="btn btn-sm btn-block btn-light mb-3 text-left" onclick="send('images')"><i class="far fa-fw fa-image mx-2"></i>compress images</button>
-                        <button class="btn btn-sm btn-block btn-light mb-3 text-left" onclick="send('favicon')"><i class="fas fa-fw fa-h-square mx-2"></i>create favicon</button>
-                        <button class="btn btn-sm btn-danger btn-block mb-3 text-left" onclick="send('clean')"><i class="fa fa-fw fa-minus-circle mx-2"></i>delete templates</button>
+                        <div id="sidebar"></div>
                     </div>
                     <div class="col-7 offset-1">
 
@@ -61,11 +55,52 @@
 
         <script type="text/babel">
 
+
+            const commands = [
+                {
+                    'fn': 'build',
+                    'text': 'build all',
+                    'icon': 'industry',
+                }, {
+                    'fn': 'css',
+                    'text': 'compile css',
+                    'icon': 'palette',
+                }, {
+                    'fn': 'js',
+                    'text': 'compile js',
+                    'icon': 'code',
+                }, {
+                    'fn': 'images',
+                    'text': 'compress images',
+                    'icon': 'image',
+                }, {
+                    'fn': 'images',
+                    'text': 'create favicon',
+                    'icon': 'h-square',
+                }, {
+                    'fn': 'clean',
+                    'text': 'delete templates',
+                    'icon': 'minus-circle',
+                    'button': 'danger'
+                }
+            ];
+
             class Container extends React.Component {
                 render() {
                     return (
                         <div className="container">
                             <Header/>
+                        </div>
+                    );
+                }
+            }
+
+            class Sidebar extends React.Component {
+                render() {
+                    return (
+                        <div>
+                            <Heading size="2" text="Gulp Processes" style="mb-4"/>
+                            <GulpCommands/>
                         </div>
                     );
                 }
@@ -92,20 +127,42 @@
                 }
             }
 
+            class GulpCommands extends React.Component {
+                render() {
+                    return commands.map((data, index) => {
+                        return <Button data={data} key={index}/>
+                    });
+                }
+            }
+
             class Button extends React.Component {
+                buttonClicked(fn){
+                    $.ajax({
+                        url : 'http://localhost:3000/send',
+                        method : 'POST',
+                        data: {
+                            'command': fn
+                        },
+                        success : function(result){
+                            console.log(result)
+                        },
+                        error : function(result){
+                            console.log(result)
+                        }
+                    });
+                };
                 render() {
                     return (
-                        <button className="btn btn-sm btn-danger btn-block mb-3 text-left" onClick="send('clean')"><i className="fa fa-fw fa-minus-circle mx-2"></i>delete templates</button>
-
+                        <button key={this.props.index} onClick={this.buttonClicked.bind(this, this.props.data.fn)} className={'btn btn-sm btn-block mb-3 text-left btn-' + (this.props.data.button ? this.props.data.button : 'light')}><i className={'fa fa-fw mx-2 fa-' + this.props.data.icon}></i>{this.props.data.text}</button>
                     );
                 }
             }
 
-            ReactDOM.render(<Heading text="Gulp Processes" style="mb-4"/>, document.getElementById('command-heading'));
             ReactDOM.render(<Heading text="Create New Template" style="mb-4"/>, document.getElementById('template-heading'));
             ReactDOM.render(<Heading text="Current Templates" style="mt-4"/>, document.getElementById('current-heading'));
 
             ReactDOM.render(<Container/>, document.getElementById('app'));
+            ReactDOM.render(<Sidebar/>, document.getElementById('sidebar'));
 
         </script>
 
