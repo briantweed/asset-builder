@@ -38,18 +38,22 @@
                         <button class="btn btn-sm btn-danger btn-block mb-3 text-left" onclick="send('clean')"><i class="fa fa-fw fa-minus-circle mx-2"></i>delete templates</button>
                     </div>
                     <div class="col-7 offset-1">
+
                         <form action="" class="pb-3">
+                            <h2 class="mt-4">Create New Templates</h2>
                             <div class="input-group mb-2">
-                                <input type="text" class="form-control form-control-sm" id="template" name="template" placeholder="create new template">
+                                <input type="text" class="form-control form-control-sm" id="template" name="template" placeholder="enter template name without .html">
                                 <div class="input-group-append">
-                                    <buttton class="btn btn-sm btn-info ml-2" onclick=create(document.getElementsByName('template')[0].value)>create</buttton>
+                                    <button class="btn btn-sm btn-info ml-2" onclick=create(document.getElementsByName('template')[0].value)>create</button>
                                 </div>
                             </div>
                         </form>
+
                         <h2 class="mt-4">Current Templates</h2>
                         <div class="list-group">
                             {{ links }}
                         </div>
+                        
                     </div>
                 </div>
             </main>

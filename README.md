@@ -16,7 +16,7 @@ Clone or download this repositiory locally to a new folder.
 
 Run `npm install`
 
-In the `.env` file, set you project variables. Below are the default settings:
+Set you variable names in the `.env` file. Below are the default settings:
 
 ```
 
