@@ -145,7 +145,7 @@ const template_links = () => {
         }
     }
     else {
-        string = 'There are currently no templates';
+        string = '<p class="my-3">There are currently no templates</p>';
     }
     return string;
 };

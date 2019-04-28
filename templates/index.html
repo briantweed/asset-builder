@@ -10,7 +10,8 @@
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-        <style>h2{font-size:1rem}.list-group-item{margin:1rem 0}.input-group>.input-group-append>.btn{border-radius:3px}</style>
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+        <style>h2{font-size:1rem}.list-group-item{margin:.3rem 0}.btn.btn-light{background-color:#e0e9f3}.input-group>.input-group-append>.btn{border-radius:3px}</style>
     </head>
 
     <body>
@@ -29,15 +30,15 @@
                 <div class="row">
                     <div class="col-2 mt-2">
                         <h2 class="mb-4">Gulp Processes</h2>
-                        <button class="btn btn-sm btn-block btn-light mb-3" onclick="send('build')">build all</button>
-                        <button class="btn btn-sm btn-block btn-light mb-3" onclick="send('css')">compile css</button>
-                        <button class="btn btn-sm btn-block btn-light mb-3" onclick="send('js')">compile js</button>
-                        <button class="btn btn-sm btn-block btn-light mb-3" onclick="send('images')">compress images</button>
-                        <button class="btn btn-sm btn-block btn-light mb-3" onclick="send('favicon')">create favicon</button>
-                        <button class="btn btn-sm btn-danger btn-block mb-3" onclick="send('clean')">delete templates</button>
+                        <button class="btn btn-sm btn-block btn-light mb-3 text-left" onclick="send('build')"><i class="fa-fw fas fa-industry mx-2"></i>build all</button>
+                        <button class="btn btn-sm btn-block btn-light mb-3 text-left" onclick="send('css')"><i class="fas fa-fw fa-palette mx-2"></i>compile css</button>
+                        <button class="btn btn-sm btn-block btn-light mb-3 text-left" onclick="send('js')"><i class="fas fa-fw fa-code mx-2"></i>compile js</button>
+                        <button class="btn btn-sm btn-block btn-light mb-3 text-left" onclick="send('images')"><i class="far fa-fw fa-image mx-2"></i>compress images</button>
+                        <button class="btn btn-sm btn-block btn-light mb-3 text-left" onclick="send('favicon')"><i class="fas fa-fw fa-h-square mx-2"></i>create favicon</button>
+                        <button class="btn btn-sm btn-danger btn-block mb-3 text-left" onclick="send('clean')"><i class="fa fa-fw fa-minus-circle mx-2"></i>delete templates</button>
                     </div>
                     <div class="col-7 offset-1">
-                        <form class="py-3">
+                        <form action="" class="pb-3">
                             <div class="input-group mb-2">
                                 <input type="text" class="form-control form-control-sm" id="template" name="template" placeholder="create new template">
                                 <div class="input-group-append">
@@ -45,7 +46,7 @@
                                 </div>
                             </div>
                         </form>
-                        <h2 class="mt-4">Current Pages</h2>
+                        <h2 class="mt-4">Current Templates</h2>
                         <div class="list-group">
                             {{ links }}
                         </div>

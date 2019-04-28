@@ -38,8 +38,9 @@ app.post('/send', function(req, res){
 
 
 app.post('/create', function(req, res){
+    console.log(req.body.command);
     if(req.body.command.length) {
-        exec('gulp template --name ' + req.body.command, function() {
+        exec('gulp template --name "' + req.body.command + '"', function() {
             res.json('{"success" : "File Created", "status" : 200}');
         });
     }
