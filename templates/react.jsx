@@ -147,11 +147,8 @@ class TemplateList extends React.Component {
     }
 
     render() {
-        console.log(this);
         return (
-            this.state.names.map((p, index) => (
-                <p>{index}</p>
-            ))
+            <p>{this.state.names}</p>
         );
     }
 

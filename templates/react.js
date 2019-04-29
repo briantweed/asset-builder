@@ -264,10 +264,7 @@ function (_React$Component6) {
   }, {
     key: "render",
     value: function render() {
-      console.log(this);
-      return React.createElement("div", {
-        className: "list-group"
-      }, this.state.names);
+      return React.createElement("p", null, this.state.names);
     }
   }]);
 
