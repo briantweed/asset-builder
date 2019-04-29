@@ -18,43 +18,12 @@
 
         <div id="app"></div>
 
-
-        <div class="container">
-
-            <main>
-                <div class="row">
-                    <div class="col-2 mt-2">
-                        <div id="sidebar"></div>
-                    </div>
-                    <div class="col-7 offset-1">
-
-                        <form action="" class="pb-3">
-                            <div id="template-heading"></div>
-                            <div class="input-group mb-2">
-                                <input type="text" class="form-control form-control-sm" id="template" name="template" placeholder="enter name without .html">
-                                <div class="input-group-append">
-                                    <button class="btn btn-sm btn-info ml-2" onclick=create(document.getElementsByName('template')[0].value)>create</button>
-                                </div>
-                            </div>
-                        </form>
-
-                        <div id="current-heading"></div>
-                        <div class="list-group">
-                            {{ links }}
-                        </div>
-                        
-                    </div>
-                </div>
-            </main>
-        </div>
-
-        <!-- React -->
+        <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
         <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
         <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
         <script src="https://unpkg.com/babel-standalone@6.26.0/babel.js"></script>
 
         <script type="text/babel">
-
 
             const commands = [
                 {
@@ -94,6 +63,18 @@
                     return (
                         <div className="container">
                             <Header/>
+                            <div className="row">
+                                <div className="col-2 mt-2">
+                                   <Sidebar/>
+                                </div>
+                                <div className="col-7 offset-1">
+                                    <TemplateForm/>
+                                    <Heading size="2" text="Current Templates" style="mt-4"/>
+                                    <div className="list-group">
+                                        {{ links }}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     );
                 }
@@ -139,6 +120,22 @@
                 }
             }
 
+            class TemplateForm extends React.Component {
+                render() {
+                    return (
+                        <div className="pb-3">
+                            <Heading text="Create New Template" style="mb-4"/>
+                            <div className="input-group mb-2">
+                                <input type="text" className="form-control form-control-sm" id="template" name="template" placeholder="enter name without .html" />
+                                <div className="input-group-append">
+                                    <button className="btn btn-sm btn-info ml-2">create</button>
+                                </div>
+                            </div>
+                        </div>
+                    );
+                }
+            }
+
             class Button extends React.Component {
                 buttonClicked(fn){
                     $.ajax({
@@ -162,20 +159,10 @@
                 }
             }
 
-            ReactDOM.render(<Heading text="Create New Template" style="mb-4"/>, document.getElementById('template-heading'));
-            ReactDOM.render(<Heading text="Current Templates" style="mt-4"/>, document.getElementById('current-heading'));
-
             ReactDOM.render(<Container/>, document.getElementById('app'));
-            ReactDOM.render(<Sidebar/>, document.getElementById('sidebar'));
 
         </script>
 
-
-
-
-
-        <!-- JQuery -->
-        <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
         <script>
 
             function create(command){
