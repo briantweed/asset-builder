@@ -295,6 +295,7 @@ function (_React$Component7) {
       var href = this.props.name + ".html";
       return React.createElement("a", {
         key: this.props.index,
+        className: "list-group-item list-group-item-action",
         href: href
       }, this.props.name);
     }

@@ -160,7 +160,7 @@ class PageLink extends React.Component {
     render() {
         const href = this.props.name + `.html`;
         return (
-            <a key={this.props.index} href={href}>{this.props.name}</a>
+            <a key={this.props.index} className="list-group-item list-group-item-action" href={href}>{this.props.name}</a>
         );
     }
 }

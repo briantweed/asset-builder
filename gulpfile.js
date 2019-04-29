@@ -133,27 +133,6 @@ const timestamp = () => {
 
 
 /**
- * Return templates links as list items
- *
- * @returns {string}
- */
-const template_links = () => {
-    let string = "";
-    let names = require('./names.json');
-    if(names.length > 0) {
-        for (let i = 0; i < names.length; i++) {
-            string += "<a class='list-group-item list-group-item-action' href='" + names[i] + ".html'>" + ucwords(names[i]) + "</a>";
-            if(1 !== names.length) string += "\n";
-        }
-    }
-    else {
-        string = 'There are currently no templates';
-    }
-    return string;
-};
-
-
-/**
  * Compile sass files
  */
 const compile_sass = () => {
