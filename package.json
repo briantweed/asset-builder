@@ -4,7 +4,10 @@
     "private": true,
     "dependencies": {
         "express": "^4.16.4",
-        "gulp-tap": "^1.0.1"
+        "react": "^16.8.6",
+        "react-dom": "^16.8.6",
+        "react-scripts": "2.1.8"
+
     },
     "scripts": {
         "start": "node server.js"
@@ -24,6 +27,7 @@
         "gulp-rename": "^1.4.0",
         "gulp-replace": "^1.0.0",
         "gulp-sass": "^4.0.2",
+        "gulp-tap": "^1.0.1",
         "gulp-uglify": "^3.0.2",
         "gulp-zip": "^4.2.0",
         "minimist": "^1.2.0"

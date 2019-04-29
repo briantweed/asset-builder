@@ -110,12 +110,26 @@
             }
 
             class TemplateForm extends React.Component {
-                buttonClicked(str) {
+                constructor(props){
+                    super(props);
+
+                    this.templateName = '';
+
+
+                    this.updateInput = this.updateInput.bind(this);
+                    this.handleSubmit = this.handleSubmit.bind(this);
+                }
+
+                updateInput() {
+                    this.templateName = event.target.value
+                }
+
+                handleSubmit() {
                     $.ajax({
                         url : 'http://localhost:3000/create',
                         method : 'POST',
                         data: {
-                            'command': str
+                            'command': this.templateName
                         },
                         success: function (result) {
                             console.log(result)
@@ -130,9 +144,9 @@
                         <div className="pb-3">
                             <Heading text="Create New Template" style="mb-4"/>
                             <div className="input-group mb-2">
-                                <input type="text" className="form-control form-control-sm" id="template" name="template" placeholder="enter name without .html" />
+                                <input onChange={this.updateInput} type="text" className="form-control form-control-sm" id="template" name="template" placeholder="enter name without .html" />
                                 <div className="input-group-append">
-                                    <button className="btn btn-sm btn-info ml-2">create</button>
+                                    <button onClick={this.handleSubmit} className="btn btn-sm btn-info ml-2">create</button>
                                 </div>
                             </div>
                         </div>
