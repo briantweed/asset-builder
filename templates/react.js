@@ -75,7 +75,7 @@ function (_React$Component) {
         size: "2",
         text: "Current Templates",
         style: "mt-4"
-      }))));
+      }), React.createElement(TemplateList, null))));
     }
   }]);
 
@@ -234,19 +234,41 @@ var TemplateList =
 function (_React$Component6) {
   _inherits(TemplateList, _React$Component6);
 
-  function TemplateList() {
+  function TemplateList(props) {
+    var _this2;
+
     _classCallCheck(this, TemplateList);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(TemplateList).apply(this, arguments));
+    _this2 = _possibleConstructorReturn(this, _getPrototypeOf(TemplateList).call(this, props));
+    _this2.state = {
+      names: 'There are currently no templates!'
+    };
+    _this2.getNames = _this2.getNames.bind(_assertThisInitialized(_this2));
+    return _this2;
   }
 
   _createClass(TemplateList, [{
+    key: "getNames",
+    value: function getNames(e) {
+      var _this3 = this;
+
+      $.ajax({
+        url: 'http://localhost:3000/names',
+        method: 'POST',
+        success: function success(data) {
+          _this3.setState({
+            names: data
+          });
+        }
+      });
+    }
+  }, {
     key: "render",
     value: function render() {
-      var text = '{{ links }}';
+      console.log(this);
       return React.createElement("div", {
         className: "list-group"
-      }, text);
+      }, this.state.names);
     }
   }]);
 

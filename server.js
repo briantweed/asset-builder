@@ -37,6 +37,13 @@ app.post('/send', function(req, res){
 });
 
 
+app.post('/names', function(req, res){
+    fs.readFile("./names.json", "utf8", function(err, data){
+        res.send(data);
+    });
+});
+
+
 app.post('/create', function(req, res){
     console.log(req.body.command);
     if(req.body.command.length) {

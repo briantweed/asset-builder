@@ -332,10 +332,6 @@ const replaceTags = (input) => {
         let re = new RegExp(pattern, "g");
         input = input.replace(re, value);
     });
-    let pattern = '{{ links }}';
-    let value = template_links();
-    let re = new RegExp(pattern, "g");
-    input = input.replace(re, value);
     return input;
 };
 

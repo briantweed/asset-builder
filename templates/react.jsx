@@ -1,3 +1,4 @@
+
 const commands = [
     {
         'fn': 'build',
@@ -43,6 +44,7 @@ class Container extends React.Component {
                     <div className="col-7 offset-1">
                         <TemplateForm/>
                         <Heading size="2" text="Current Templates" style="mt-4"/>
+                        <TemplateList/>
                     </div>
                 </div>
             </div>
@@ -87,7 +89,6 @@ class TemplateForm extends React.Component {
 
         this.templateName = '';
 
-
         this.updateInput = this.updateInput.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
@@ -127,11 +128,29 @@ class TemplateForm extends React.Component {
 }
 
 class TemplateList extends React.Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            names: 'There are currently no templates!'
+        };
+        this.getNames = this.getNames.bind(this);
+    }
+
+    getNames(e) {
+        $.ajax({
+            url : 'http://localhost:3000/names',
+            method : 'POST',
+            success: (data) => {
+               this.setState({names: data});
+            }
+        });
+    }
+
     render() {
-        const text = '{{ links }}';
+        console.log(this);
         return (
             <div className="list-group">
-                {text}
+                {this.state.names}
             </div>
         );
     }
