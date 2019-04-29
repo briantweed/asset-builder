@@ -149,9 +149,9 @@ class TemplateList extends React.Component {
     render() {
         console.log(this);
         return (
-            <div className="list-group">
-                {this.state.names}
-            </div>
+            this.state.names.map((p, index) => (
+                <p>{index}</p>
+            ))
         );
     }
 
