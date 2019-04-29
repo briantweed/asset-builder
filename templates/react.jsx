@@ -131,18 +131,18 @@ class TemplateList extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            names: 'There are currently no templates!'
+            names: []
         };
         this.getNames = this.getNames.bind(this);
     }
 
-    getNames(e) {
+    getNames() {
         $.ajax({
             url : 'http://localhost:3000/names',
             method : 'POST',
-            success: (data) => {
+            success: function(data) {
                this.setState({names: data});
-            }
+            }.bind(this)
         });
     }
 
