@@ -266,43 +266,47 @@ function (_React$Component6) {
     key: "render",
     value: function render() {
       var names = this.state.names;
-      console.log(names);
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
-
-      try {
-        for (var _iterator = names[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var name = _step.value;
-          console.log(name);
-        }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator["return"] != null) {
-            _iterator["return"]();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
-      }
-
-      ;
-      return React.createElement("p", null, names);
+      return names.map(function (name, index) {
+        return React.createElement(PageLink, {
+          name: name,
+          key: index
+        });
+      });
     }
   }]);
 
   return TemplateList;
 }(React.Component);
 
-var Heading =
+var PageLink =
 /*#__PURE__*/
 function (_React$Component7) {
-  _inherits(Heading, _React$Component7);
+  _inherits(PageLink, _React$Component7);
+
+  function PageLink() {
+    _classCallCheck(this, PageLink);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(PageLink).apply(this, arguments));
+  }
+
+  _createClass(PageLink, [{
+    key: "render",
+    value: function render() {
+      var href = this.props.name + ".html";
+      return React.createElement("a", {
+        key: this.props.index,
+        href: href
+      }, this.props.name);
+    }
+  }]);
+
+  return PageLink;
+}(React.Component);
+
+var Heading =
+/*#__PURE__*/
+function (_React$Component8) {
+  _inherits(Heading, _React$Component8);
 
   function Heading() {
     _classCallCheck(this, Heading);
@@ -325,8 +329,8 @@ function (_React$Component7) {
 
 var Button =
 /*#__PURE__*/
-function (_React$Component8) {
-  _inherits(Button, _React$Component8);
+function (_React$Component9) {
+  _inherits(Button, _React$Component9);
 
   function Button() {
     _classCallCheck(this, Button);

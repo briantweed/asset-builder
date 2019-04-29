@@ -86,9 +86,7 @@ class Header extends React.Component {
 class TemplateForm extends React.Component {
     constructor(props){
         super(props);
-
         this.templateName = '';
-
         this.updateInput = this.updateInput.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
@@ -149,17 +147,23 @@ class TemplateList extends React.Component {
 
     render() {
         let names = this.state.names;
-        console.log(names);
-        for (var name of names) {
-            console.log(name);
-        };
-        return (
-            <p>{names}</p>
-        );
+        return names.map((name, index) => {
+            return <PageLink name={name} key={index}/>
+        });
+
     }
 
 }
 
+
+class PageLink extends React.Component {
+    render() {
+        const href = this.props.name + `.html`;
+        return (
+            <a key={this.props.index} href={href}>{this.props.name}</a>
+        );
+    }
+}
 
 class Heading extends React.Component {
     render() {

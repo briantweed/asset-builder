@@ -39,7 +39,7 @@ app.post('/send', function(req, res){
 
 app.post('/names', function(req, res){
     fs.readFile("./names.json", "utf8", function(err, data){
-        res.send(data);
+        res.json(JSON.parse(data));
     });
 });
 
