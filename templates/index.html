@@ -70,9 +70,7 @@
                                 <div className="col-7 offset-1">
                                     <TemplateForm/>
                                     <Heading size="2" text="Current Templates" style="mt-4"/>
-                                    <div className="list-group">
-                                        {{ links }}
-                                    </div>
+                                    <TemplateList/>
                                 </div>
                             </div>
                         </div>
@@ -91,6 +89,14 @@
                 }
             }
 
+            class GulpCommands extends React.Component {
+                render() {
+                    return commands.map((data, index) => {
+                        return <Button data={data} key={index}/>
+                    });
+                }
+            }
+
             class Header extends React.Component {
                 render() {
                     return (
@@ -103,24 +109,22 @@
                 }
             }
 
-            class Heading extends React.Component {
-                render() {
-                    const HeadingTag = `h${(this.props.size ? this.props.size : 2)}`;
-                    return (
-                        <HeadingTag className={this.props.style}>{this.props.text}</HeadingTag>
-                    );
-                }
-            }
-
-            class GulpCommands extends React.Component {
-                render() {
-                    return commands.map((data, index) => {
-                        return <Button data={data} key={index}/>
+            class TemplateForm extends React.Component {
+                buttonClicked(str) {
+                    $.ajax({
+                        url : 'http://localhost:3000/create',
+                        method : 'POST',
+                        data: {
+                            'command': str
+                        },
+                        success: function (result) {
+                            console.log(result)
+                        },
+                        error : function(result){
+                            console.log(result)
+                        }
                     });
                 }
-            }
-
-            class TemplateForm extends React.Component {
                 render() {
                     return (
                         <div className="pb-3">
@@ -132,6 +136,26 @@
                                 </div>
                             </div>
                         </div>
+                    );
+                }
+            }
+
+            class TemplateList extends React.Component {
+                render() {
+                    return (
+                        <div className="list-group">
+                            {{ links }}
+                        </div>
+                    );
+                }
+            }
+
+
+            class Heading extends React.Component {
+                render() {
+                    const HeadingTag = `h${(this.props.size ? this.props.size : 2)}`;
+                    return (
+                        <HeadingTag className={this.props.style}>{this.props.text}</HeadingTag>
                     );
                 }
             }
@@ -154,32 +178,13 @@
                 };
                 render() {
                     return (
-                        <button key={this.props.index} onClick={this.buttonClicked.bind(this, this.props.data.fn)} className={'btn btn-sm btn-block mb-3 text-left btn-' + (this.props.data.button ? this.props.data.button : 'light')}><i className={'fa fa-fw mx-2 fa-' + this.props.data.icon}></i>{this.props.data.text}</button>
+                        <button key={this.props.index} onClick={this.buttonClicked.bind(this, this.props.data.fn)} className={'btn btn-sm btn-block mb-3 text-left btn-' + (this.props.data.button ? this.props.data.button : 'light')}><i className={'fa fa-fw mx-2 fa-' + this.props.data.icon}> </i>{this.props.data.text}</button>
                     );
                 }
             }
 
             ReactDOM.render(<Container/>, document.getElementById('app'));
 
-        </script>
-
-        <script>
-
-            function create(command){
-                $.ajax({
-                    url : 'http://localhost:3000/create',
-                    method : 'POST',
-                    data: {
-                        'command': command
-                    },
-                    success: function (result) {
-                        console.log(result)
-                    },
-                    error : function(result){
-                        console.log(result)
-                    }
-                });
-            }
         </script>
 
     </body>
