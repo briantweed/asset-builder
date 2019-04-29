@@ -18,6 +18,12 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
+var ucwords = function ucwords(string) {
+  return string.toLowerCase().split(/[\s-_]+/).map(function (word) {
+    return word.charAt(0).toUpperCase() + word.slice(1);
+  }).join(' ');
+};
+
 var commands = [{
   'fn': 'build',
   'text': 'build all',
@@ -74,7 +80,7 @@ function (_React$Component) {
       }, React.createElement(TemplateForm, null), React.createElement(Heading, {
         size: "2",
         text: "Current Templates",
-        style: "mt-4"
+        style: "my-4"
       }), React.createElement(TemplateList, null))));
     }
   }]);
@@ -241,7 +247,7 @@ function (_React$Component6) {
 
     _this2 = _possibleConstructorReturn(this, _getPrototypeOf(TemplateList).call(this, props));
     _this2.state = {
-      names: []
+      names: 'There are currently no templates'
     };
     return _this2;
   }
@@ -256,7 +262,7 @@ function (_React$Component6) {
         method: 'POST',
         dataType: 'JSON',
         success: function success(data) {
-          _this3.setState({
+          if (data.length) _this3.setState({
             names: data
           });
         }
@@ -266,12 +272,17 @@ function (_React$Component6) {
     key: "render",
     value: function render() {
       var names = this.state.names;
-      return names.map(function (name, index) {
-        return React.createElement(PageLink, {
-          name: name,
-          key: index
+
+      if (_typeof(names) === "object") {
+        return names.map(function (name, index) {
+          return React.createElement(PageLink, {
+            name: name,
+            key: index
+          });
         });
-      });
+      } else {
+        return React.createElement("p", null, names);
+      }
     }
   }]);
 
@@ -297,7 +308,7 @@ function (_React$Component7) {
         key: this.props.index,
         className: "list-group-item list-group-item-action",
         href: href
-      }, this.props.name);
+      }, ucwords(this.props.name));
     }
   }]);
 

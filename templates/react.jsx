@@ -1,4 +1,12 @@
 
+const ucwords = (string) => {
+    return string.toLowerCase()
+        .split(/[\s-_]+/)
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+};
+
+
 const commands = [
     {
         'fn': 'build',
@@ -32,7 +40,9 @@ const commands = [
     }
 ];
 
-class Container extends React.Component {
+
+class Container extends React.Component
+{
     render() {
         return (
             <div className="container">
@@ -43,7 +53,7 @@ class Container extends React.Component {
                     </div>
                     <div className="col-7 offset-1">
                         <TemplateForm/>
-                        <Heading size="2" text="Current Templates" style="mt-4"/>
+                        <Heading size="2" text="Current Templates" style="my-4"/>
                         <TemplateList/>
                     </div>
                 </div>
@@ -52,7 +62,9 @@ class Container extends React.Component {
     }
 }
 
-class Sidebar extends React.Component {
+
+class Sidebar extends React.Component
+{
     render() {
         return (
             <div>
@@ -63,7 +75,9 @@ class Sidebar extends React.Component {
     }
 }
 
-class GulpCommands extends React.Component {
+
+class GulpCommands extends React.Component
+{
     render() {
         return commands.map((data, index) => {
             return <Button data={data} key={index}/>
@@ -71,7 +85,9 @@ class GulpCommands extends React.Component {
     }
 }
 
-class Header extends React.Component {
+
+class Header extends React.Component
+{
     render() {
         return (
             <div className="row">
@@ -83,7 +99,9 @@ class Header extends React.Component {
     }
 }
 
-class TemplateForm extends React.Component {
+
+class TemplateForm extends React.Component
+{
     constructor(props){
         super(props);
         this.templateName = '';
@@ -110,6 +128,7 @@ class TemplateForm extends React.Component {
             }
         });
     }
+
     render() {
         return (
             <div className="pb-3">
@@ -125,12 +144,12 @@ class TemplateForm extends React.Component {
     }
 }
 
-class TemplateList extends React.Component {
-
+class TemplateList extends React.Component
+{
     constructor(props) {
         super(props);
         this.state = {
-            names: []
+            names: 'There are currently no templates'
         };
     }
 
@@ -140,32 +159,40 @@ class TemplateList extends React.Component {
             method : 'POST',
             dataType: 'JSON',
             success: (data) => {
-               this.setState({names: data});
+               if(data.length) this.setState({names: data});
             }
         });
     }
 
     render() {
         let names = this.state.names;
-        return names.map((name, index) => {
-            return <PageLink name={name} key={index}/>
-        });
+        if(typeof names === "object") {
+            return names.map((name, index) => {
+                return <PageLink name={name} key={index}/>
+            });
+        } else {
+            return (
+                <p>{names}</p>
+            );
+        }
 
     }
-
 }
 
 
-class PageLink extends React.Component {
+class PageLink extends React.Component
+{
     render() {
         const href = this.props.name + `.html`;
         return (
-            <a key={this.props.index} className="list-group-item list-group-item-action" href={href}>{this.props.name}</a>
+            <a key={this.props.index} className="list-group-item list-group-item-action" href={href}>{ucwords(this.props.name)}</a>
         );
     }
 }
 
-class Heading extends React.Component {
+
+class Heading extends React.Component
+{
     render() {
         const HeadingTag = `h${(this.props.size ? this.props.size : 2)}`;
         return (
@@ -174,7 +201,9 @@ class Heading extends React.Component {
     }
 }
 
-class Button extends React.Component {
+
+class Button extends React.Component
+{
     buttonClicked(fn){
         $.ajax({
             url : 'http://localhost:3000/send',
@@ -190,11 +219,13 @@ class Button extends React.Component {
             }
         });
     };
+
     render() {
         return (
             <button key={this.props.index} onClick={this.buttonClicked.bind(this, this.props.data.fn)} className={'btn btn-sm btn-block mb-3 text-left btn-' + (this.props.data.button ? this.props.data.button : 'light')}><i className={'fa fa-fw mx-2 fa-' + this.props.data.icon}> </i>{this.props.data.text}</button>
         );
     }
 }
+
 
 ReactDOM.render(<Container/>, document.getElementById('app'));
