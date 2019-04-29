@@ -128,21 +128,21 @@ class TemplateForm extends React.Component {
 }
 
 class TemplateList extends React.Component {
-    constructor(props){
+
+    constructor(props) {
         super(props);
         this.state = {
-            names: []
+            names: 'There are currently no templates.'
         };
-        this.getNames = this.getNames.bind(this);
     }
 
-    getNames() {
+    componentDidMount() {
         $.ajax({
             url : 'http://localhost:3000/names',
             method : 'POST',
-            success: function(data) {
+            success: (data) => {
                this.setState({names: data});
-            }.bind(this)
+            }
         });
     }
 
@@ -154,6 +154,7 @@ class TemplateList extends React.Component {
             </div>
         );
     }
+
 }
 
 

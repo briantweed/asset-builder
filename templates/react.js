@@ -241,23 +241,24 @@ function (_React$Component6) {
 
     _this2 = _possibleConstructorReturn(this, _getPrototypeOf(TemplateList).call(this, props));
     _this2.state = {
-      names: []
+      names: 'There are currently no templates.'
     };
-    _this2.getNames = _this2.getNames.bind(_assertThisInitialized(_this2));
     return _this2;
   }
 
   _createClass(TemplateList, [{
-    key: "getNames",
-    value: function getNames() {
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      var _this3 = this;
+
       $.ajax({
         url: 'http://localhost:3000/names',
         method: 'POST',
-        success: function (data) {
-          this.setState({
+        success: function success(data) {
+          _this3.setState({
             names: data
           });
-        }.bind(this)
+        }
       });
     }
   }, {
