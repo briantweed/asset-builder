@@ -241,7 +241,7 @@ function (_React$Component6) {
 
     _this2 = _possibleConstructorReturn(this, _getPrototypeOf(TemplateList).call(this, props));
     _this2.state = {
-      names: 'There are currently no templates.'
+      names: []
     };
     return _this2;
   }
@@ -254,6 +254,7 @@ function (_React$Component6) {
       $.ajax({
         url: 'http://localhost:3000/names',
         method: 'POST',
+        dataType: 'JSON',
         success: function success(data) {
           _this3.setState({
             names: data
@@ -264,7 +265,34 @@ function (_React$Component6) {
   }, {
     key: "render",
     value: function render() {
-      return React.createElement("p", null, this.state.names);
+      var names = this.state.names;
+      console.log(names);
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = names[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var name = _step.value;
+          console.log(name);
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+            _iterator["return"]();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
+      ;
+      return React.createElement("p", null, names);
     }
   }]);
 
