@@ -10,6 +10,7 @@ const fs = require('fs');
 const gulp = require('gulp');
 const server = require('browser-sync').create();
 
+const babel = require('gulp-babel');
 const cleanCSS = require('gulp-clean-css');
 const concat = require('gulp-concat');
 const del = require('del');
@@ -17,6 +18,7 @@ const envmod = require('gulp-env-modify');
 const favicon = require ('gulp-real-favicon');
 const filelist = require("gulp-filelist");
 const image = require('gulp-image');
+const inline = require('gulp-inline-source');
 const minimist = require('minimist');
 const notify = require('gulp-notify');
 const rename = require('gulp-rename');
@@ -145,7 +147,7 @@ const template_links = () => {
         }
     }
     else {
-        string = '<p class="my-3">There are currently no templates</p>';
+        string = 'There are currently no templates';
     }
     return string;
 };
@@ -282,7 +284,13 @@ const delete_cached_files = (done) => {
  * Create landing page with links to template files
  */
 const create_html_link_page = () => {
+    gulp.src("./templates/*.jsx")
+        .pipe(babel({
+            presets: ['@babel/env', '@babel/preset-react']
+        }))
+        .pipe(gulp.dest("./templates/"));
     return gulp.src('./templates/index.html')
+        .pipe(inline())
         .pipe(gulp.dest(dist_folder));
 };
 

@@ -7,21 +7,24 @@
         "react": "^16.8.6",
         "react-dom": "^16.8.6",
         "react-scripts": "2.1.8"
-
     },
     "scripts": {
         "start": "node server.js"
     },
     "devDependencies": {
+        "@babel/core": "^7.4.4",
+        "@babel/preset-env": "^7.4.4",
         "bootstrap": "^4.3.1",
         "browser-sync": "^2.26.5",
         "del": "^4.1.0",
         "gulp": "^4.0.1",
+        "gulp-babel": "^8.0.0",
         "gulp-clean-css": "^4.0.0",
         "gulp-concat": "^2.6.1",
         "gulp-env-modify": "^1.0.8",
         "gulp-filelist": "^1.1.1",
         "gulp-image": "^4.4.1",
+        "gulp-inline-source": "^4.0.0",
         "gulp-notify": "^3.2.0",
         "gulp-real-favicon": "^0.3.2",
         "gulp-rename": "^1.4.0",
