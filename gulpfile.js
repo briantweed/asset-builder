@@ -60,8 +60,8 @@ let folders = [
     dist_folder, dist_css_folder, dist_fonts_folder, dist_images_folder, dist_js_folder
 ];
 
-let project_author = env.PROJECT_AUTHOR;
 let project_title = env.PROJECT_TITLE;
+let project_image = env.PROJECT_IMAGE;
 let template_name = env.HTML_TEMPLATE_FILE_NAME;
 
 let favicon_name = env.FAVICON_IMAGE_NAME;
@@ -117,18 +117,18 @@ const slug = (string) => {
 };
 
 
+const get_presentation_content = () => {
+    return replaceTags(fs.readFileSync('./templates/presentation.html','utf8'));
+};
+
+
 /**
  * Return templates links as list items
  *
  * @returns {string}
  */
 const template_links = () => {
-    let string = `
-        <div class='container'>
-            <h1 class="my-4">` +  project_title + `</h1>
-            <div class='row'>
-                <div class='col-8 offset-2'>
-    `;
+    let string ='';
     let names = require('./names.json');
     if(names.length > 0) {
         for (let i = 0; i < names.length; i++) {
@@ -139,9 +139,6 @@ const template_links = () => {
     else {
         string = 'There are currently no templates';
     }
-    string += `</div>
-            </div>
-        </div>`;
     return string;
 };
 
@@ -340,6 +337,10 @@ const replaceTags = (input) => {
         let re = new RegExp(pattern, "g");
         input = input.replace(re, value);
     });
+    let pattern = '{{ links }}';
+    let value = template_links();
+    let re = new RegExp(pattern, "g");
+    input = input.replace(re, value);
     return input;
 };
 
@@ -460,7 +461,9 @@ const create_folders = (done) => {
  */
 const zip_assets = () => {
     return gulp.src(dist_folder + '/*')
-        .pipe(replace('<div id="app"></div>', template_links()))
+        .pipe(replace(/\<body[^>]*\>([^]*)\<\/body>/m, function() {
+            return get_presentation_content();
+        }))
         .pipe(zip(zip_file_name + '_' + timestamp() + '.zip'))
         .pipe(gulp.dest('./' + export_folder))
         .pipe(notify({
