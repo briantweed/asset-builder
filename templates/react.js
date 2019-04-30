@@ -74,9 +74,9 @@ function (_React$Component) {
       }, React.createElement(Header, null), React.createElement("div", {
         className: "row"
       }, React.createElement("div", {
-        className: "col-2 mt-2"
+        className: "col-12 col-sm-5 col-md-4 col-lg-3 col-xl-2 mt-2"
       }, React.createElement(Sidebar, null)), React.createElement("div", {
-        className: "col-7 offset-1"
+        className: "col-12 col-sm-6 offset-sm-1"
       }, React.createElement(TemplateForm, null), React.createElement(Heading, {
         size: "2",
         text: "Current Templates",
