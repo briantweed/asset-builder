@@ -45,6 +45,10 @@ var commands = [{
   'text': 'create favicon',
   'icon': 'dice-five'
 }, {
+  'fn': 'fonts',
+  'text': 'copy fonts',
+  'icon': 'font'
+}, {
   'fn': 'zip',
   'text': 'zip assets',
   'icon': 'file-archive'
@@ -195,6 +199,7 @@ function (_React$Component5) {
       $.ajax({
         url: 'http://localhost:3000/create',
         method: 'POST',
+        dataType: 'json',
         data: {
           'command': this.templateName
         },
@@ -260,7 +265,7 @@ function (_React$Component6) {
       $.ajax({
         url: 'http://localhost:3000/names',
         method: 'POST',
-        dataType: 'JSON',
+        dataType: 'json',
         success: function success(data) {
           if (data.length) _this3.setState({
             names: data
@@ -344,23 +349,41 @@ var Button =
 function (_React$Component9) {
   _inherits(Button, _React$Component9);
 
-  function Button() {
+  function Button(props) {
+    var _this4;
+
     _classCallCheck(this, Button);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(Button).apply(this, arguments));
+    _this4 = _possibleConstructorReturn(this, _getPrototypeOf(Button).call(this, props));
+    _this4.updateIcon = _this4.updateIcon.bind(_assertThisInitialized(_this4));
+    _this4["default"] = _this4.props.data.icon;
+    _this4.spinner = 'spinner fa-spin';
+    _this4.state = {
+      icon: _this4["default"]
+    };
+    return _this4;
   }
 
   _createClass(Button, [{
+    key: "updateIcon",
+    value: function updateIcon(icon) {
+      this.setState({
+        icon: icon
+      });
+    }
+  }, {
     key: "buttonClicked",
-    value: function buttonClicked(fn) {
+    value: function buttonClicked(command) {
+      var self = this;
+      self.updateIcon(this.spinner);
       $.ajax({
         url: 'http://localhost:3000/send',
         method: 'POST',
         data: {
-          'command': fn
+          'command': command
         },
         success: function success(result) {
-          console.log(result);
+          self.updateIcon(self["default"]);
         },
         error: function error(result) {
           console.log(result);
@@ -375,7 +398,7 @@ function (_React$Component9) {
         onClick: this.buttonClicked.bind(this, this.props.data.fn),
         className: 'btn btn-sm btn-block mb-3 text-left btn-' + (this.props.data.button ? this.props.data.button : 'light')
       }, React.createElement("i", {
-        className: 'fa fa-fw ml-1 mr-2 fa-' + this.props.data.icon
+        className: 'fa fa-fw mx-2 fa-' + this.state.icon
       }, " "), this.props.data.text);
     }
   }]);

@@ -32,7 +32,7 @@ app.listen(3000, function () {
 
 app.post('/send', function(req, res){
     exec('gulp ' + req.body.command, function() {
-        res.json('{"success" : "Gulp ' + req.body.command + ' ran", "status" : 200}');
+        res.json({success : "Gulp " + req.body.command + " ran", status : 200});
     });
 });
 
@@ -48,7 +48,7 @@ app.post('/create', function(req, res){
     console.log(req.body.command);
     if(req.body.command.length) {
         exec('gulp template --name "' + req.body.command + '"', function() {
-            res.json('{"success" : "File Created", "status" : 200}');
+            res.json({success : req.body.command + " page created", status : 200});
         });
     }
 });

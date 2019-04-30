@@ -29,6 +29,10 @@ const commands = [
         'text': 'create favicon',
         'icon': 'dice-five',
     }, {
+        'fn': 'fonts',
+        'text': 'copy fonts',
+        'icon': 'font',
+    }, {
         'fn': 'zip',
         'text': 'zip assets',
         'icon': 'file-archive',
@@ -117,6 +121,7 @@ class TemplateForm extends React.Component
         $.ajax({
             url : 'http://localhost:3000/create',
             method : 'POST',
+            dataType: 'json',
             data: {
                 'command': this.templateName
             },
@@ -144,6 +149,7 @@ class TemplateForm extends React.Component
     }
 }
 
+
 class TemplateList extends React.Component
 {
     constructor(props) {
@@ -157,7 +163,7 @@ class TemplateList extends React.Component
         $.ajax({
             url : 'http://localhost:3000/names',
             method : 'POST',
-            dataType: 'JSON',
+            dataType: 'json',
             success: (data) => {
                if(data.length) this.setState({names: data});
             }
@@ -204,15 +210,31 @@ class Heading extends React.Component
 
 class Button extends React.Component
 {
-    buttonClicked(fn){
+    constructor(props) {
+        super(props);
+        this.updateIcon = this.updateIcon.bind(this);
+        this.default = this.props.data.icon;
+        this.spinner = 'spinner fa-spin';
+        this.state = {
+            icon: this.default
+        };
+    }
+
+    updateIcon(icon) {
+        this.setState({icon: icon});
+    }
+
+    buttonClicked(command){
+        let self = this;
+        self.updateIcon(this.spinner);
         $.ajax({
             url : 'http://localhost:3000/send',
             method : 'POST',
             data: {
-                'command': fn
+                'command': command
             },
             success : function(result){
-                console.log(result)
+                self.updateIcon(self.default);
             },
             error : function(result){
                 console.log(result)
@@ -222,7 +244,7 @@ class Button extends React.Component
 
     render() {
         return (
-            <button key={this.props.index} onClick={this.buttonClicked.bind(this, this.props.data.fn)} className={'btn btn-sm btn-block mb-3 text-left btn-' + (this.props.data.button ? this.props.data.button : 'light')}><i className={'fa fa-fw ml-1 mr-2 fa-' + this.props.data.icon}> </i>{this.props.data.text}</button>
+            <button key={this.props.index} onClick={this.buttonClicked.bind(this, this.props.data.fn)} className={'btn btn-sm btn-block mb-3 text-left btn-' + (this.props.data.button ? this.props.data.button : 'light')}><i className={'fa fa-fw mx-2 fa-' + this.state.icon}> </i>{this.props.data.text}</button>
         );
     }
 }
