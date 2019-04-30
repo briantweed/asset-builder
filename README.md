@@ -21,8 +21,6 @@ Set you variable names in the `.env` file. Below are the default settings:
 ```
 
 # Project
-PROJECT_AUTHOR = Your Name
-
 PROJECT_TITLE = Asset Builder
 ZIP_FILE_NAME = asset_builder
 
