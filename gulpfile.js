@@ -118,6 +118,35 @@ const slug = (string) => {
 
 
 /**
+ * Return templates links as list items
+ *
+ * @returns {string}
+ */
+const template_links = () => {
+    let string = `
+        <div class='container'>
+            <h1 class="my-4">` +  project_title + `</h1>
+            <div class='row'>
+                <div class='col-8 offset-2'>
+    `;
+    let names = require('./names.json');
+    if(names.length > 0) {
+        for (let i = 0; i < names.length; i++) {
+            string += "<a class='list-group-item list-group-item-action' href='" + names[i] + ".html'>" + ucwords(names[i]) + "</a>";
+            if(1 !== names.length) string += "\n";
+        }
+    }
+    else {
+        string = 'There are currently no templates';
+    }
+    string += `</div>
+            </div>
+        </div>`;
+    return string;
+};
+
+
+/**
  * Create timestamp in the format Y_m_d_h_i_s
  *
  * @returns {string}
@@ -431,6 +460,7 @@ const create_folders = (done) => {
  */
 const zip_assets = () => {
     return gulp.src(dist_folder + '/*')
+        .pipe(replace('<div id="app"></div>', template_links()))
         .pipe(zip(zip_file_name + '_' + timestamp() + '.zip'))
         .pipe(gulp.dest('./' + export_folder))
         .pipe(notify({
