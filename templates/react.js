@@ -41,7 +41,7 @@ var commands = [{
   'text': 'compress images',
   'icon': 'image'
 }, {
-  'fn': 'images',
+  'fn': 'favicon',
   'text': 'create favicon',
   'icon': 'dice-five'
 }, {
@@ -74,9 +74,9 @@ function (_React$Component) {
       }, React.createElement(Header, null), React.createElement("div", {
         className: "row"
       }, React.createElement("div", {
-        className: "col-12 col-sm-5 col-md-4 col-lg-3 col-xl-2 mt-2"
+        className: "col-12 col-sm-5 col-md-4 col-lg-3 col-xl-3 mt-2"
       }, React.createElement(Sidebar, null)), React.createElement("div", {
-        className: "col-12 col-sm-6 offset-sm-1"
+        className: "col-12 col-sm-6 col-md-6 offset-sm-1"
       }, React.createElement(TemplateForm, null), React.createElement(Heading, {
         size: "2",
         text: "Current Templates",
@@ -375,7 +375,7 @@ function (_React$Component9) {
         onClick: this.buttonClicked.bind(this, this.props.data.fn),
         className: 'btn btn-sm btn-block mb-3 text-left btn-' + (this.props.data.button ? this.props.data.button : 'light')
       }, React.createElement("i", {
-        className: 'fa fa-fw mx-2 fa-' + this.props.data.icon
+        className: 'fa fa-fw ml-1 mr-2 fa-' + this.props.data.icon
       }, " "), this.props.data.text);
     }
   }]);

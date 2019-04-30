@@ -25,7 +25,7 @@ const commands = [
         'text': 'compress images',
         'icon': 'image',
     }, {
-        'fn': 'images',
+        'fn': 'favicon',
         'text': 'create favicon',
         'icon': 'dice-five',
     }, {
@@ -48,10 +48,10 @@ class Container extends React.Component
             <div className="container">
                 <Header/>
                 <div className="row">
-                    <div className="col-12 col-sm-5 col-md-4 col-lg-3 col-xl-2 mt-2">
+                    <div className="col-12 col-sm-5 col-md-4 col-lg-3 col-xl-3 mt-2">
                         <Sidebar/>
                     </div>
-                    <div className="col-12 col-sm-6 offset-sm-1">
+                    <div className="col-12 col-sm-6 col-md-6 offset-sm-1">
                         <TemplateForm/>
                         <Heading size="2" text="Current Templates" style="my-4"/>
                         <TemplateList/>
@@ -222,7 +222,7 @@ class Button extends React.Component
 
     render() {
         return (
-            <button key={this.props.index} onClick={this.buttonClicked.bind(this, this.props.data.fn)} className={'btn btn-sm btn-block mb-3 text-left btn-' + (this.props.data.button ? this.props.data.button : 'light')}><i className={'fa fa-fw mx-2 fa-' + this.props.data.icon}> </i>{this.props.data.text}</button>
+            <button key={this.props.index} onClick={this.buttonClicked.bind(this, this.props.data.fn)} className={'btn btn-sm btn-block mb-3 text-left btn-' + (this.props.data.button ? this.props.data.button : 'light')}><i className={'fa fa-fw ml-1 mr-2 fa-' + this.props.data.icon}> </i>{this.props.data.text}</button>
         );
     }
 }
