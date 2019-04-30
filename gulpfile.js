@@ -76,7 +76,7 @@ let js_file_name = env.JS_FILE_NAME;
 let js_file_suffix = env.JS_FILE_NAME_SUFFIX;
 
 let tags = [
-    'project_author', 'project_title', 'template_name', 'favicon_name', 'favicon_tile_color', 'favicon_theme_color',
+    'project_title', 'project_image', 'template_name', 'favicon_name', 'favicon_tile_color', 'favicon_theme_color',
     'zip_file_name', 'css_file_name', 'css_file_suffix', 'js_file_name', 'js_file_suffix',
 ];
 
