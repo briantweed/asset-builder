@@ -235,6 +235,9 @@ class Button extends React.Component
             },
             success : function(result){
                 self.updateIcon(self.default);
+                if(result.status === 200) {
+                   toastr["success"](result.success)
+                }
             },
             error : function(result){
                 console.log(result)

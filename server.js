@@ -2,6 +2,7 @@ const fs = require('fs');
 const parse = require('body-parser');
 const express = require('express');
 const { exec } = require('child_process');
+const { spawn } = require('child_process');
 
 const app = express();
 
@@ -25,15 +26,17 @@ app.listen(3000, function () {
         });
     }
     exec('gulp setup');
-    exec('gulp watch');
-    console.log('server running on port 3000');
+    // exec('gulp watch');
+    console.log('server http://localhost:3000');
 });
 
 
 app.post('/send', function(req, res){
-    exec('gulp ' + req.body.command, function() {
-        res.json({success : "Gulp " + req.body.command + " ran", status : 200});
+    const child  = spawn('gulp', [req.body.command], {});
+    child.stdout.on('data', function(data) {
+
     });
+    res.json({success : 'done', status : 200});
 });
 
 

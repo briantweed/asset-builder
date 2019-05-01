@@ -384,6 +384,10 @@ function (_React$Component9) {
         },
         success: function success(result) {
           self.updateIcon(self["default"]);
+
+          if (result.status === 200) {
+            toastr["success"](result.success);
+          }
         },
         error: function error(result) {
           console.log(result);
