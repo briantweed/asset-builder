@@ -5,12 +5,14 @@ const { exec } = require('child_process');
 
 const app = express();
 
+let watching = false;
+
 app.use(parse.json());
 app.use(parse.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 app.use(function (req, res, next) {
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3001');
+    res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
     res.setHeader('Access-Control-Allow-Credentials', true);
@@ -28,11 +30,18 @@ app.listen(3000, function () {
     exec('gulp setup');
     if(args[0] === "watch") {
         exec('gulp watch');
+        watching = true;
         console.log('App listening at http://localhost:3001');
     }
     else {
         console.log('Example app listening at http://localhost:3000');
     }
+});
+
+app.post('/setup', function(req, res){
+    res.json({
+        'watching': watching
+    });
 });
 
 

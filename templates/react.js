@@ -27,35 +27,43 @@ var ucwords = function ucwords(string) {
 var commands = [{
   'fn': 'build',
   'text': 'build all',
-  'icon': 'industry'
+  'icon': 'industry',
+  'watch': true
 }, {
   'fn': 'css',
   'text': 'compile css',
-  'icon': 'palette'
+  'icon': 'palette',
+  'watch': true
 }, {
   'fn': 'js',
   'text': 'compile js',
-  'icon': 'code'
+  'icon': 'code',
+  'watch': true
 }, {
   'fn': 'images',
   'text': 'compress images',
-  'icon': 'image'
+  'icon': 'image',
+  'watch': true
 }, {
   'fn': 'favicon',
   'text': 'create favicon',
-  'icon': 'dice-five'
+  'icon': 'dice-five',
+  'watch': true
 }, {
   'fn': 'fonts',
   'text': 'copy fonts',
-  'icon': 'font'
+  'icon': 'font',
+  'watch': true
 }, {
   'fn': 'zip',
   'text': 'zip assets',
-  'icon': 'file-archive'
+  'icon': 'file-archive',
+  'watch': false
 }, {
   'fn': 'clean',
   'text': 'delete templates',
   'icon': 'minus-circle',
+  'watch': false,
   'button': 'danger'
 }];
 
@@ -122,21 +130,55 @@ var GulpCommands =
 function (_React$Component3) {
   _inherits(GulpCommands, _React$Component3);
 
-  function GulpCommands() {
+  function GulpCommands(props) {
+    var _this;
+
     _classCallCheck(this, GulpCommands);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(GulpCommands).apply(this, arguments));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(GulpCommands).call(this, props));
+    _this.state = {
+      watching: null
+    };
+    return _this;
   }
 
   _createClass(GulpCommands, [{
+    key: "componentWillMount",
+    value: function componentWillMount() {
+      var _this2 = this;
+
+      $.ajax({
+        url: 'http://localhost:3000/setup',
+        method: 'POST',
+        dataType: 'json',
+        success: function success(res) {
+          _this2.setState({
+            watching: res.watching
+          });
+        }
+      });
+    }
+  }, {
     key: "render",
     value: function render() {
-      return commands.map(function (data, index) {
-        return React.createElement(Button, {
-          data: data,
-          key: index
+      var _this3 = this;
+
+      console.log(this.state.watching);
+
+      if (this.state.watching !== null) {
+        return commands.map(function (data, index) {
+          console.log(data.watch);
+
+          if (_this3.state.watching === true && data.watch === true) {
+            return '';
+          } else {
+            return React.createElement(Button, {
+              data: data,
+              key: index
+            });
+          }
         });
-      });
+      } else return '';
     }
   }]);
 
@@ -177,15 +219,15 @@ function (_React$Component5) {
   _inherits(TemplateForm, _React$Component5);
 
   function TemplateForm(props) {
-    var _this;
+    var _this4;
 
     _classCallCheck(this, TemplateForm);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(TemplateForm).call(this, props));
-    _this.templateName = '';
-    _this.updateInput = _this.updateInput.bind(_assertThisInitialized(_this));
-    _this.handleSubmit = _this.handleSubmit.bind(_assertThisInitialized(_this));
-    return _this;
+    _this4 = _possibleConstructorReturn(this, _getPrototypeOf(TemplateForm).call(this, props));
+    _this4.templateName = '';
+    _this4.updateInput = _this4.updateInput.bind(_assertThisInitialized(_this4));
+    _this4.handleSubmit = _this4.handleSubmit.bind(_assertThisInitialized(_this4));
+    return _this4;
   }
 
   _createClass(TemplateForm, [{
@@ -246,29 +288,29 @@ function (_React$Component6) {
   _inherits(TemplateList, _React$Component6);
 
   function TemplateList(props) {
-    var _this2;
+    var _this5;
 
     _classCallCheck(this, TemplateList);
 
-    _this2 = _possibleConstructorReturn(this, _getPrototypeOf(TemplateList).call(this, props));
-    _this2.state = {
+    _this5 = _possibleConstructorReturn(this, _getPrototypeOf(TemplateList).call(this, props));
+    _this5.state = {
       names: 'There are currently no templates'
     };
-    return _this2;
+    return _this5;
   }
 
   _createClass(TemplateList, [{
     key: "componentDidMount",
     value: function componentDidMount() {
-      var _this3 = this;
+      var _this6 = this;
 
       $.ajax({
         url: 'http://localhost:3000/names',
         method: 'POST',
         dataType: 'json',
-        success: function success(data) {
-          if (data.length) _this3.setState({
-            names: data
+        success: function success(res) {
+          if (res.length) _this6.setState({
+            names: res
           });
         }
       });
@@ -350,18 +392,18 @@ function (_React$Component9) {
   _inherits(Button, _React$Component9);
 
   function Button(props) {
-    var _this4;
+    var _this7;
 
     _classCallCheck(this, Button);
 
-    _this4 = _possibleConstructorReturn(this, _getPrototypeOf(Button).call(this, props));
-    _this4.updateIcon = _this4.updateIcon.bind(_assertThisInitialized(_this4));
-    _this4["default"] = _this4.props.data.icon;
-    _this4.spinner = 'spinner fa-spin';
-    _this4.state = {
-      icon: _this4["default"]
+    _this7 = _possibleConstructorReturn(this, _getPrototypeOf(Button).call(this, props));
+    _this7.updateIcon = _this7.updateIcon.bind(_assertThisInitialized(_this7));
+    _this7["default"] = _this7.props.data.icon;
+    _this7.spinner = 'spinner fa-spin';
+    _this7.state = {
+      icon: _this7["default"]
     };
-    return _this4;
+    return _this7;
   }
 
   _createClass(Button, [{

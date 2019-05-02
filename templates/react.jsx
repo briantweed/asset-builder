@@ -12,34 +12,42 @@ const commands = [
         'fn': 'build',
         'text': 'build all',
         'icon': 'industry',
+        'watch': true
     }, {
         'fn': 'css',
         'text': 'compile css',
         'icon': 'palette',
+        'watch': true
     }, {
         'fn': 'js',
         'text': 'compile js',
         'icon': 'code',
+        'watch': true
     }, {
         'fn': 'images',
         'text': 'compress images',
         'icon': 'image',
+        'watch': true
     }, {
         'fn': 'favicon',
         'text': 'create favicon',
         'icon': 'dice-five',
+        'watch': true
     }, {
         'fn': 'fonts',
         'text': 'copy fonts',
         'icon': 'font',
+        'watch': true
     }, {
         'fn': 'zip',
         'text': 'zip assets',
         'icon': 'file-archive',
+        'watch': false
     }, {
         'fn': 'clean',
         'text': 'delete templates',
         'icon': 'minus-circle',
+        'watch': false,
         'button': 'danger'
     }
 ];
@@ -82,10 +90,37 @@ class Sidebar extends React.Component
 
 class GulpCommands extends React.Component
 {
-    render() {
-        return commands.map((data, index) => {
-            return <Button data={data} key={index}/>
+    constructor(props) {
+        super(props);
+        this.state = {
+            watching: null
+        };
+    }
+
+    componentWillMount() {
+        $.ajax({
+            url : 'http://localhost:3000/setup',
+            method : 'POST',
+            dataType: 'json',
+            success: (res) => {
+                this.setState({watching: res.watching});
+            }
         });
+    }
+
+    render() {
+        console.log(this.state.watching);
+        if(this.state.watching !== null) {
+            return commands.map((data, index) => {
+                console.log(data.watch);
+                if(this.state.watching === true && data.watch === true) {
+                    return '';
+                } else {
+                    return <Button data={data} key={index}/>
+                }
+            });
+        }
+        else return '';
     }
 }
 
@@ -164,8 +199,8 @@ class TemplateList extends React.Component
             url : 'http://localhost:3000/names',
             method : 'POST',
             dataType: 'json',
-            success: (data) => {
-               if(data.length) this.setState({names: data});
+            success: (res) => {
+               if(res.length) this.setState({names: res});
             }
         });
     }
