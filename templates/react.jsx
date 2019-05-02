@@ -9,6 +9,10 @@ const ucwords = (string) => {
 
 const commands = [
     {
+        'fn': 'watch',
+        'text': 'watch',
+        'icon': 'eye',
+    }, {
         'fn': 'build',
         'text': 'build all',
         'icon': 'industry',

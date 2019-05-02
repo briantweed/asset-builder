@@ -18,22 +18,27 @@ app.use(function (req, res, next) {
 });
 
 
-app.listen(3000, function (str) {
-    console.log(str);
+app.listen(3000, function () {
+    const args = process.argv.slice(2);
     if (!fs.existsSync('./names.json')) {
         fs.writeFile('./names.json', '[]', function (err) {
             if (err) throw err;
         });
     }
     exec('gulp setup');
-    // exec('gulp watch');
-    console.log('server http://localhost:3000');
+    if(args[0] === "watch") {
+        exec('gulp watch');
+        console.log('App listening at http://localhost:3001');
+    }
+    else {
+        console.log('Example app listening at http://localhost:3000');
+    }
 });
 
 
 app.post('/send', function(req, res){
-    exec(req.body.command, function() {
-        res.json({success : req.body.command + " task ran successfully", status : 200});
+    exec("gulp " + req.body.command, function() {
+        res.json({success : "Task ran successfully", status : 200});
     });
 });
 
