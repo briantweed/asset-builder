@@ -580,10 +580,8 @@ const gulp_favicon = gulp.series(generate_favicon);
 const gulp_html = gulp.series(
     delete_copied_html,
     get_html_names,
-    gulp.parallel(
-        create_html_link_page,
-        copy_html
-    ),
+    create_html_link_page,
+    copy_html,
     replace_tags_in_templates
 );
 
@@ -696,3 +694,5 @@ exports.template = gulp_template;
 exports.test = gulp_test;
 exports.watch = gulp_watch;
 exports.zip = gulp_zip;
+
+exports.server = create_html_link_page;

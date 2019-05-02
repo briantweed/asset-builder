@@ -25,10 +25,6 @@ var ucwords = function ucwords(string) {
 };
 
 var commands = [{
-  'fn': 'watch',
-  'text': 'watch',
-  'icon': 'eye'
-}, {
   'fn': 'build',
   'text': 'build all',
   'icon': 'industry'
