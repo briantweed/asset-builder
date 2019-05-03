@@ -243,33 +243,32 @@ function (_React$Component5) {
       this.setState({
         icon: icon
       });
-      console.log(icon);
     }
   }, {
     key: "handleSubmit",
     value: function handleSubmit() {
       var self = this;
       self.updateIcon(this.spinner);
-      $.ajax({
-        url: 'http://localhost:3000/create',
-        method: 'POST',
-        dataType: 'json',
-        data: {
-          'command': this.templateName
-        },
-        success: function success(result) {
-          if (result.status === 200) {
-            toastr["success"](result.success);
-          } else if (result.status === 400) {
-            toastr["error"](result.error);
-          }
+      axios.post('http://localhost:3000/create', {
+        'command': this.templateName
+      }).then(function (result) {
+        self.updateIcon(self["default"]);
 
-          self.updateIcon(self["default"]);
-        },
-        error: function error(result) {
-          toastr["error"](result.success);
-          self.updateIcon(self["default"]);
+        if (result.status === 200) {
+          iziToast.show({
+            title: 'Success',
+            message: result.data.success,
+            position: 'topRight',
+            color: 'green'
+          });
         }
+      })["catch"](function (error) {
+        iziToast.show({
+          title: 'Oops',
+          message: 'Something went wrong',
+          position: 'topRight',
+          color: 'red'
+        });
       });
     }
   }, {
@@ -437,10 +436,20 @@ function (_React$Component9) {
         self.updateIcon(self["default"]);
 
         if (result.status === 200) {
-          toastr["success"](result.data.success);
+          iziToast.show({
+            title: 'Success',
+            message: result.data.success,
+            position: 'topRight',
+            color: 'green'
+          });
         }
       })["catch"](function (error) {
-        toastr["error"]('oops');
+        iziToast.show({
+          title: 'Oops',
+          message: 'Something went wrong',
+          position: 'topRight',
+          y: y
+        });
       });
     }
   }, {
