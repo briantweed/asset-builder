@@ -5,8 +5,7 @@
 !templates/*
 !.env
 !.gitignore
-!asset_builder.cmd
-!gulpfile.jsjj
+!gulpfile.json
 !package.json
 !package-lock.json
 !server.js
