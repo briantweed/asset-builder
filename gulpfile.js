@@ -678,7 +678,10 @@ const gulp_test = () => {
 };
 
 
-const gulp_server = gulp.series(compile_babel, create_html_link_page);
+/**
+ * @Command: gulp babel
+ */
+const gulp_babel = gulp.series(compile_babel, create_html_link_page);
 
 
 
@@ -701,4 +704,4 @@ exports.test = gulp_test;
 exports.watch = gulp_watch;
 exports.zip = gulp_zip;
 
-exports.server = gulp_server;
+exports.babel = gulp_babel;

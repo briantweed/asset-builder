@@ -151,7 +151,7 @@ function (_React$Component3) {
     key: "componentWillMount",
     value: function componentWillMount() {
       var self = this;
-      axios.post('/setup', {}).then(function (result) {
+      axios.post('http://localhost:3000/setup', {}).then(function (result) {
         self.setState({
           watching: result.data.watching
         });
@@ -251,7 +251,7 @@ function (_React$Component5) {
       var self = this;
       self.updateIcon(this.spinner);
       $.ajax({
-        url: '/create',
+        url: 'http://localhost:3000/create',
         method: 'POST',
         dataType: 'json',
         data: {
@@ -322,7 +322,7 @@ function (_React$Component6) {
     key: "componentDidMount",
     value: function componentDidMount() {
       var self = this;
-      axios.post('/names', {}).then(function (result) {
+      axios.post('http://localhost:3000/names', {}).then(function (result) {
         if (result.data.length) self.setState({
           names: result.data
         });

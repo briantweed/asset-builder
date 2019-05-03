@@ -104,7 +104,7 @@ class GulpCommands extends React.Component
 
     componentWillMount() {
         let self = this;
-        axios.post('/setup', {})
+        axios.post('http://localhost:3000/setup', {})
             .then(function(result) {
                 self.setState({watching: result.data.watching});
             });
@@ -166,7 +166,7 @@ class TemplateForm extends React.Component
         let self = this;
         self.updateIcon(this.spinner);
         $.ajax({
-            url : '/create',
+            url : 'http://localhost:3000/create',
             method : 'POST',
             dataType: 'json',
             data: {
@@ -214,7 +214,7 @@ class TemplateList extends React.Component
 
     componentDidMount() {
         let self = this;
-        axios.post('/names', {})
+        axios.post('http://localhost:3000/names', {})
         .then(function(result) {
             if(result.data.length) self.setState({names: result.data})
         });
