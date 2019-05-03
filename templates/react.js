@@ -35,6 +35,11 @@ var commands = [{
   'icon': 'palette',
   'watch': true
 }, {
+  'fn': 'html',
+  'text': 'publish templates',
+  'icon': 'file',
+  'watch': true
+}, {
   'fn': 'js',
   'text': 'compile js',
   'icon': 'code',
