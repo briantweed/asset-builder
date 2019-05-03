@@ -103,21 +103,16 @@ class GulpCommands extends React.Component
     }
 
     componentWillMount() {
-        $.ajax({
-            url : 'http://localhost:3000/setup',
-            method : 'POST',
-            dataType: 'json',
-            success: (res) => {
-                this.setState({watching: res.watching});
-            }
-        });
+        let self = this;
+        axios.post('/setup', {})
+            .then(function(result) {
+                self.setState({watching: result.data.watching});
+            });
     }
 
     render() {
-        console.log(this.state.watching);
         if(this.state.watching !== null) {
             return commands.map((data, index) => {
-                console.log(data.watch);
                 if(this.state.watching === true && data.watch === true) {
                     return '';
                 } else {
@@ -171,7 +166,7 @@ class TemplateForm extends React.Component
         let self = this;
         self.updateIcon(this.spinner);
         $.ajax({
-            url : 'http://localhost:3000/create',
+            url : '/create',
             method : 'POST',
             dataType: 'json',
             data: {
@@ -218,13 +213,10 @@ class TemplateList extends React.Component
     }
 
     componentDidMount() {
-        $.ajax({
-            url : 'http://localhost:3000/names',
-            method : 'POST',
-            dataType: 'json',
-            success: (res) => {
-               if(res.length) this.setState({names: res});
-            }
+        let self = this;
+        axios.post('/names', {})
+        .then(function(result) {
+            if(result.data.length) self.setState({names: result.data})
         });
     }
 
@@ -285,21 +277,17 @@ class Button extends React.Component
     buttonClicked(command){
         let self = this;
         self.updateIcon(this.spinner);
-        $.ajax({
-            url : 'http://localhost:3000/send',
-            method : 'POST',
-            data: {
-                'command': command
-            },
-            success : function(result){
-                self.updateIcon(self.default);
-                if(result.status === 200) {
-                   toastr["success"](result.success)
-                }
-            },
-            error : function(result){
-                console.log(result)
+        axios.post('http://localhost:3000/send', {
+            'command': command
+        })
+        .then(function(result) {
+            self.updateIcon(self.default);
+            if(result.status === 200) {
+                toastr["success"](result.data.success)
             }
+        })
+        .catch(function(error) {
+            toastr["error"]('oops');
         });
     };
 

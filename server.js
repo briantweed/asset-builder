@@ -47,7 +47,7 @@ app.post('/setup', function(req, res){
 
 app.post('/send', function(req, res){
     exec("gulp " + req.body.command, function() {
-        res.json({success : "Task ran successfully", status : 200});
+        res.json({success : "Task ran successfully"});
     });
 });
 
@@ -62,10 +62,10 @@ app.post('/names', function(req, res){
 app.post('/create', function(req, res){
     if(req.body.command.length) {
         exec('gulp template --name "' + req.body.command + '"', function() {
-            res.json({success : req.body.command + " page created", status : 200});
+            res.json({success : req.body.command + " page created"});
         });
     }
     else {
-        res.json({error : " no page name given", status : 400});
+        res.json({error : " no page name given"});
     }
 });

@@ -1,8 +1,5 @@
 'use strict';
 
-
-
-
 /**
  * ----- Required Packages -----
  */
@@ -159,6 +156,18 @@ const timestamp = () => {
 
 
 /**
+ * Compile react.jsx to js
+ */
+const compile_babel = () => {
+    return gulp.src("./templates/*.jsx")
+        .pipe(babel({
+            presets: ['@babel/env', '@babel/preset-react']
+        }))
+        .pipe(gulp.dest("./templates/"));
+};
+
+
+/**
  * Compile sass files
  */
 const compile_sass = () => {
@@ -289,11 +298,6 @@ const delete_cached_files = (done) => {
  * Create landing page with links to template files
  */
 const create_html_link_page = () => {
-    gulp.src("./templates/*.jsx")
-        .pipe(babel({
-            presets: ['@babel/env', '@babel/preset-react']
-        }))
-        .pipe(gulp.dest("./templates/"));
     return gulp.src('./templates/index.html')
         .pipe(inline())
         .pipe(gulp.dest(dist_folder));
@@ -579,6 +583,7 @@ const gulp_favicon = gulp.series(generate_favicon);
  */
 const gulp_html = gulp.series(
     delete_copied_html,
+    compile_babel,
     get_html_names,
     create_html_link_page,
     copy_html,
@@ -673,6 +678,7 @@ const gulp_test = () => {
 };
 
 
+const gulp_server = gulp.series(compile_babel, create_html_link_page);
 
 
 
@@ -695,4 +701,4 @@ exports.test = gulp_test;
 exports.watch = gulp_watch;
 exports.zip = gulp_zip;
 
-exports.server = create_html_link_page;
+exports.server = gulp_server;

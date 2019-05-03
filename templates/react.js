@@ -150,31 +150,21 @@ function (_React$Component3) {
   _createClass(GulpCommands, [{
     key: "componentWillMount",
     value: function componentWillMount() {
-      var _this2 = this;
-
-      $.ajax({
-        url: 'http://localhost:3000/setup',
-        method: 'POST',
-        dataType: 'json',
-        success: function success(res) {
-          _this2.setState({
-            watching: res.watching
-          });
-        }
+      var self = this;
+      axios.post('/setup', {}).then(function (result) {
+        self.setState({
+          watching: result.data.watching
+        });
       });
     }
   }, {
     key: "render",
     value: function render() {
-      var _this3 = this;
-
-      console.log(this.state.watching);
+      var _this2 = this;
 
       if (this.state.watching !== null) {
         return commands.map(function (data, index) {
-          console.log(data.watch);
-
-          if (_this3.state.watching === true && data.watch === true) {
+          if (_this2.state.watching === true && data.watch === true) {
             return '';
           } else {
             return React.createElement(Button, {
@@ -224,22 +214,22 @@ function (_React$Component5) {
   _inherits(TemplateForm, _React$Component5);
 
   function TemplateForm(props) {
-    var _this4;
+    var _this3;
 
     _classCallCheck(this, TemplateForm);
 
-    _this4 = _possibleConstructorReturn(this, _getPrototypeOf(TemplateForm).call(this, props));
-    _this4.templateName = '';
-    _this4.updateInput = _this4.updateInput.bind(_assertThisInitialized(_this4));
-    _this4.handleSubmit = _this4.handleSubmit.bind(_assertThisInitialized(_this4));
-    _this4["default"] = 'create';
-    _this4.spinner = React.createElement("i", {
+    _this3 = _possibleConstructorReturn(this, _getPrototypeOf(TemplateForm).call(this, props));
+    _this3.templateName = '';
+    _this3.updateInput = _this3.updateInput.bind(_assertThisInitialized(_this3));
+    _this3.handleSubmit = _this3.handleSubmit.bind(_assertThisInitialized(_this3));
+    _this3["default"] = 'create';
+    _this3.spinner = React.createElement("i", {
       className: "fas fa-fw fa-spinner fa-spin"
     }, " ");
-    _this4.state = {
-      icon: _this4["default"]
+    _this3.state = {
+      icon: _this3["default"]
     };
-    return _this4;
+    return _this3;
   }
 
   _createClass(TemplateForm, [{
@@ -261,7 +251,7 @@ function (_React$Component5) {
       var self = this;
       self.updateIcon(this.spinner);
       $.ajax({
-        url: 'http://localhost:3000/create',
+        url: '/create',
         method: 'POST',
         dataType: 'json',
         data: {
@@ -317,31 +307,25 @@ function (_React$Component6) {
   _inherits(TemplateList, _React$Component6);
 
   function TemplateList(props) {
-    var _this5;
+    var _this4;
 
     _classCallCheck(this, TemplateList);
 
-    _this5 = _possibleConstructorReturn(this, _getPrototypeOf(TemplateList).call(this, props));
-    _this5.state = {
+    _this4 = _possibleConstructorReturn(this, _getPrototypeOf(TemplateList).call(this, props));
+    _this4.state = {
       names: 'There are currently no templates'
     };
-    return _this5;
+    return _this4;
   }
 
   _createClass(TemplateList, [{
     key: "componentDidMount",
     value: function componentDidMount() {
-      var _this6 = this;
-
-      $.ajax({
-        url: 'http://localhost:3000/names',
-        method: 'POST',
-        dataType: 'json',
-        success: function success(res) {
-          if (res.length) _this6.setState({
-            names: res
-          });
-        }
+      var self = this;
+      axios.post('/names', {}).then(function (result) {
+        if (result.data.length) self.setState({
+          names: result.data
+        });
       });
     }
   }, {
@@ -421,18 +405,18 @@ function (_React$Component9) {
   _inherits(Button, _React$Component9);
 
   function Button(props) {
-    var _this7;
+    var _this5;
 
     _classCallCheck(this, Button);
 
-    _this7 = _possibleConstructorReturn(this, _getPrototypeOf(Button).call(this, props));
-    _this7.updateIcon = _this7.updateIcon.bind(_assertThisInitialized(_this7));
-    _this7["default"] = _this7.props.data.icon;
-    _this7.spinner = 'spinner fa-spin';
-    _this7.state = {
-      icon: _this7["default"]
+    _this5 = _possibleConstructorReturn(this, _getPrototypeOf(Button).call(this, props));
+    _this5.updateIcon = _this5.updateIcon.bind(_assertThisInitialized(_this5));
+    _this5["default"] = _this5.props.data.icon;
+    _this5.spinner = 'spinner fa-spin';
+    _this5.state = {
+      icon: _this5["default"]
     };
-    return _this7;
+    return _this5;
   }
 
   _createClass(Button, [{
@@ -447,22 +431,16 @@ function (_React$Component9) {
     value: function buttonClicked(command) {
       var self = this;
       self.updateIcon(this.spinner);
-      $.ajax({
-        url: 'http://localhost:3000/send',
-        method: 'POST',
-        data: {
-          'command': command
-        },
-        success: function success(result) {
-          self.updateIcon(self["default"]);
+      axios.post('http://localhost:3000/send', {
+        'command': command
+      }).then(function (result) {
+        self.updateIcon(self["default"]);
 
-          if (result.status === 200) {
-            toastr["success"](result.success);
-          }
-        },
-        error: function error(result) {
-          console.log(result);
+        if (result.status === 200) {
+          toastr["success"](result.data.success);
         }
+      })["catch"](function (error) {
+        toastr["error"]('oops');
       });
     }
   }, {

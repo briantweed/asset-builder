@@ -6,7 +6,7 @@
 !.env
 !.gitignore
 !asset_builder.cmd
-!gulpfile.js
+!gulpfile.jsjj
 !package.json
 !package-lock.json
 !server.js
