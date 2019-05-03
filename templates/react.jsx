@@ -146,13 +146,25 @@ class TemplateForm extends React.Component
         this.templateName = '';
         this.updateInput = this.updateInput.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.default = 'create';
+        this.spinner = <i className="fas fa-fw fa-spinner fa-spin"> </i>;
+        this.state = {
+            icon: this.default
+        };
     }
 
     updateInput() {
         this.templateName = event.target.value
     }
 
+    updateIcon(icon) {
+        this.setState({icon: icon});
+        console.log(icon);
+    }
+
     handleSubmit() {
+        let self = this;
+        self.updateIcon(this.spinner);
         $.ajax({
             url : 'http://localhost:3000/create',
             method : 'POST',
@@ -161,10 +173,16 @@ class TemplateForm extends React.Component
                 'command': this.templateName
             },
             success: function (result) {
-                console.log(result)
+                if(result.status === 200) {
+                    toastr["success"](result.success);
+                } else if(result.status === 400) {
+                    toastr["error"](result.error);
+                }
+                self.updateIcon(self.default);
             },
             error : function(result){
-                console.log(result)
+                toastr["error"](result.success);
+                self.updateIcon(self.default);
             }
         });
     }
@@ -176,7 +194,7 @@ class TemplateForm extends React.Component
                 <div className="input-group mb-2">
                     <input onChange={this.updateInput} type="text" className="form-control form-control-sm" id="template" name="template" placeholder="enter name without .html" />
                     <div className="input-group-append">
-                        <button onClick={this.handleSubmit} className="btn btn-sm btn-info ml-2">create</button>
+                        <button onClick={this.handleSubmit} className="btn btn-sm btn-info ml-2">{this.state.icon}</button>
                     </div>
                 </div>
             </div>

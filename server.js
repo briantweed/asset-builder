@@ -65,4 +65,7 @@ app.post('/create', function(req, res){
             res.json({success : req.body.command + " page created", status : 200});
         });
     }
+    else {
+        res.json({error : " no page name given", status : 400});
+    }
 });

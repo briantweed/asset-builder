@@ -227,6 +227,13 @@ function (_React$Component5) {
     _this4.templateName = '';
     _this4.updateInput = _this4.updateInput.bind(_assertThisInitialized(_this4));
     _this4.handleSubmit = _this4.handleSubmit.bind(_assertThisInitialized(_this4));
+    _this4["default"] = 'create';
+    _this4.spinner = React.createElement("i", {
+      className: "fas fa-fw fa-spinner fa-spin"
+    }, " ");
+    _this4.state = {
+      icon: _this4["default"]
+    };
     return _this4;
   }
 
@@ -236,8 +243,18 @@ function (_React$Component5) {
       this.templateName = event.target.value;
     }
   }, {
+    key: "updateIcon",
+    value: function updateIcon(icon) {
+      this.setState({
+        icon: icon
+      });
+      console.log(icon);
+    }
+  }, {
     key: "handleSubmit",
     value: function handleSubmit() {
+      var self = this;
+      self.updateIcon(this.spinner);
       $.ajax({
         url: 'http://localhost:3000/create',
         method: 'POST',
@@ -246,10 +263,17 @@ function (_React$Component5) {
           'command': this.templateName
         },
         success: function success(result) {
-          console.log(result);
+          if (result.status === 200) {
+            toastr["success"](result.success);
+          } else if (result.status === 400) {
+            toastr["error"](result.error);
+          }
+
+          self.updateIcon(self["default"]);
         },
         error: function error(result) {
-          console.log(result);
+          toastr["error"](result.success);
+          self.updateIcon(self["default"]);
         }
       });
     }
@@ -275,7 +299,7 @@ function (_React$Component5) {
       }, React.createElement("button", {
         onClick: this.handleSubmit,
         className: "btn btn-sm btn-info ml-2"
-      }, "create"))));
+      }, this.state.icon))));
     }
   }]);
 
