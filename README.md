@@ -42,3 +42,10 @@ This will also create a user interface for running individual gulp commands, as 
 - `gulp zip` - zip distribution folder and save to export folder
 - `gulp clean` - delete all compiled files
 
+
+## Dev
+
+The user interface is built using React. The main file can be found in `templates/react.jsx`
+This file is then compiled using `babel` to `templates/react.js` and used for the interface.
+
+The gulp command is `gulp babel`, should you want to make changes.
